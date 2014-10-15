@@ -3,12 +3,10 @@ title: API Reference
 
 language_tabs:
   - shell
-  - ruby
-  - python
 
 toc_footers:
-  - <a href='#'>Sign Up for a Developer Key</a>
-  - <a href='http://github.com/tripit/slate'>Documentation Powered by Slate</a>
+  - <a href='/#/account/api'>Sign Up for a Developer Key</a>
+  - <a href='mailto:support@sfox.com'>Need help? Email us</a>
 
 includes:
   - errors
@@ -18,67 +16,37 @@ search: true
 
 # Introduction
 
-Welcome to the Kittn API! You can use our API to access Kittn API endpoints, which can get information on various cats, kittens, and breeds in our database.
-
-We have language bindings in Shell, Ruby, and Python! You can view code examples in the dark area to the right, and you can switch the programming language of the examples with the tabs in the top right.
-
-This example API documentation page was created with [Slate](http://github.com/tripit/slate). Feel free to edit it and use it as a base for your own API's documentation.
+Welcome to the SFOX API! The SFOX API allows you to connect your application to our platform execute trades, deposit and withdraw without going through the web interface.
 
 # Authentication
 
 > To authorize, use this code:
 
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-```
-
 ```shell
 # With shell, you can just pass the correct header with each request
 curl "api_endpoint_here"
-  -H "Authorization: meowmeowmeow"
+  -u "<api token>:"
 ```
 
-> Make sure to replace `meowmeowmeow` with your API key.
+> Make sure to replace `<api_key>` with your API key, and don't forget the colon.
 
-Kittn uses API keys to allow access to the API. You can register a new Kittn API key at our [developer portal](http://example.com/developers).
+SFOX uses API keys to allow access to the API. You can register a new SFOX API key at our [developer portal](http://sfox.com/#/account/api).
 
-Kittn expects for the API key to be included in all API requests to the server in a header that looks like the following:
+SFOX expects for the API key to be included in all API requests to the server in a header that looks like the following:
 
-`Authorization: meowmeowmeow`
+`Authorization: Bearer <api_key>`
 
 <aside class="notice">
-You must replace `meowmeowmeow` with your personal API key.
+You must replace `<api_key>` with your personal API key.
 </aside>
 
-# Kittens
+# User
 
-## Get All Kittens
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get()
-```
+## Get Account Balance
 
 ```shell
-curl "http://example.com/api/kittens"
-  -H "Authorization: meowmeowmeow"
+curl "https://www.sfox.com/v1/user/balance"
+  -u "<api_key>:"
 ```
 
 > The above command returns JSON structured like this:
@@ -86,83 +54,288 @@ curl "http://example.com/api/kittens"
 ```json
 [
   {
-    "id": 1,
-    "name": "Fluffums",
-    "breed": "calico",
-    "fluffiness": 6,
-    "cuteness": 7
+    "currency":"btc",
+    "balance":0.627,
+    "available":0
   },
   {
-    "id": 2,
-    "name": "Isis",
-    "breed": "unknown",
-    "fluffiness": 5,
-    "cuteness": 10
+    "currency":"usd",
+    "balance":0.25161318,
+    "available":0.23161321
   }
 ]
 ```
 
-This endpoint retrieves all kittens.
+This endpoint retrieves all the balances for your account.  It returns an array of objects, each of which has details for a single currency.  As this example return object is demonstrating you can have different values for balance and available.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is reserved; either in an open trade or a withdrawal request.
 
 ### HTTP Request
 
-`GET http://example.com/kittens`
+`GET https://www.sfox.com/v1/balance`
 
 ### Query Parameters
 
 Parameter | Default | Description
 --------- | ------- | -----------
-include_cats | false | If set to true, the result will also include cats.
-available | true | If set to false, the result will include kittens that have already been adopted.
+NONE
 
-<aside class="success">
-Remember — a happy kitten is an authenticated kitten!
-</aside>
-
-## Get a Specific Kitten
-
-```ruby
-require 'kittn'
-
-api = Kittn::APIClient.authorize!('meowmeowmeow')
-api.kittens.get(2)
-```
-
-```python
-import kittn
-
-api = kittn.authorize('meowmeowmeow')
-api.kittens.get(2)
-```
+## Withdraw Funds
 
 ```shell
-curl "http://example.com/api/kittens/3"
-  -H "Authorization: meowmeowmeow"
+curl "https://www.sfox.com/v1/user/withdraw"
+  -H "Authorization: <api_key>"
+  -d "amount=1"
+  -d "address="
+  -d "currency=usd"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 {
-  "id": 2,
-  "name": "Isis",
-  "breed": "unknown",
-  "fluffiness": 5,
-  "cuteness": 10
+  "success": true
 }
 ```
 
-This endpoint retrieves a specific kitten.
+This endpoint submits a withdrawal request to SFOX.
 
-<aside class="warning">If you're not using an administrator API key, note that some kittens will return 403 Forbidden if they are hidden for admins only.</aside>
+<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
 
 ### HTTP Request
 
-`GET http://example.com/kittens/<ID>`
+`POST https://www.sfox.com/v1/user/withdraw`
 
-### URL Parameters
+### Form Parameters
 
 Parameter | Description
 --------- | -----------
-ID | The ID of the cat to retrieve
+amount | The amount you wish to withdraw
+currency | Currency is one of: usd or btc
+address | if currency == btc this field has to be a valid mainnet bitcoin address. Otherwise leave it out or empty
+
+## Request an ACH deposit
+
+```shell
+curl "https://www.sfox.com/v1/user/withdraw"
+  -H "Authorization: <api_key>"
+  -d "amount=1"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "success": true
+}
+```
+
+This endpoint submits an ach deposit request to SFOX.
+
+<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
+
+### HTTP Request
+
+`POST https://www.sfox.com/v1/user/deposit`
+
+### Form Parameters
+
+Parameter | Description
+--------- | -----------
+amount | The amount you wish to deposit from your bank account
+
+# Orders
+
+## Buy Bitcoin
+
+```shell
+curl "https://www.sfox.com/v1/orders/buy"
+  -u "<api_key>:"
+  -d "quantity=1"
+  -d "price=10"
+```
+
+> The above command returns the same JSON object as the Order Status API, and it is structured like this:
+
+```json
+{
+  "id": 666,
+  "quantity": 1,
+  "price": 10,
+  "o_action": "Buy",
+  "pair": "BTCUSD",
+  "type": "Limit",
+  "vwap": 0,
+  "filled": 0,
+  "status": "Started"
+}
+```
+
+This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If there is an issue with the request you will get the reason in the "error" field.
+
+### HTTP Request
+
+`POST https://www.sfox.com/v1/orders/buy`
+
+### Query Parameters
+
+Parameter | Description
+--------- | -----------
+quantity | the amount of bitcoin you wish to buy
+price | the max price you are willing to pay.  The executed price will always be less than or equal to this price if the market conditions allow it, otherwise the order will not execute.
+
+
+
+
+## Sell Bitcoin
+
+```shell
+curl "https://www.sfox.com/v1/orders/sell"
+  -u "<api_key>:"
+  -d "quantity=1"
+  -d "price=10"
+```
+
+> The above command returns the same JSON object as the Order Status API, and it is structured like this:
+
+```json
+{
+  "id": 667,
+  "quantity": 1,
+  "price": 10,
+  "o_action": "Sell",
+  "pair": "BTCUSD",
+  "type": "Limit",
+  "vwap": 0,
+  "filled": 0,
+  "status": "Started"
+}
+```
+
+This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If there is an issue with the request you will get the reason in the "error" field.
+
+### HTTP Request
+
+`POST https://www.sfox.com/v1/orders/sell`
+
+### Query Parameters
+
+Parameter | Description
+--------- | -----------
+quantity | the amount of bitcoin you wish to buy
+price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
+
+
+
+
+## Get Order Status
+
+```shell
+curl "https://www.sfox.com/v1/order/<order_id>"
+  -u "<api_key>:"
+```
+
+> The above command returns a JSON structured like this:
+
+```json
+{
+  "id": 666,
+  "quantity": 1,
+  "price": 10,
+  "o_action": "Buy",
+  "pair": "BTCUSD",
+  "type": "Limit",
+  "vwap": 0,
+  "filled": 0,
+  "status": "Started"
+}
+```
+
+This endpoint returns the status of the order specified by the <order_id> url parameter
+
+### HTTP Request
+
+`GET https://www.sfox.com/v1/order/<order_id>`
+
+### Possible "status" values
+
+Value | Description
+--------- | -----------
+Started | The order is open on the marketplace waiting for fills
+Cancel pending | The order is in the process of being cancelled
+Canceled | The order was successfully canceled
+Filled | The order was filled
+Done | The order was completed successfully
+
+
+
+
+## Get Active Orders
+
+```shell
+curl "https://www.sfox.com/v1/orders"
+  -u "<api_key>:"
+```
+
+> The above command returns an array of Order Status JSON objects structured like this:
+
+```json
+[
+  {
+    "id": 666,
+    "quantity": 1,
+    "price": 10,
+    "o_action": "Buy",
+    "pair": "BTCUSD",
+    "type": "Limit",
+    "vwap": 0,
+    "filled": 0,
+    "status": "Started"
+  },
+  {
+    "id": 667,
+    "quantity": 1,
+    "price": 10,
+    "o_action": "Sell",
+    "pair": "BTCUSD",
+    "type": "Limit",
+    "vwap": 0,
+    "filled": 0,
+    "status": "Started"
+  }
+]
+```
+
+This endpoint returns an array of statuses for all active orders.
+
+### HTTP Request
+
+`GET https://www.sfox.com/v1/orders`
+
+### Possible "status" values
+
+Value | Description
+--------- | -----------
+Started | The order is open on the marketplace waiting for fills
+Cancel pending | The order is in the process of being cancelled
+Canceled | The order was successfully canceled
+Filled | The order was filled
+Done | The order was completed successfully
+
+
+
+
+## Cancel Order
+
+```shell
+curl "https://www.sfox.com/v1/order/<order_id>"
+  -u "<api_key>:"
+  -X DELETE
+```
+
+> The above command does not return anything.  To check on the cancellation status of the order you will need to poll the get order status api.
+
+This endpoint will start cancelling the order specified.
+
+### HTTP Request
+
+`DELETE https://www.sfox.com/v1/order/<order_id>`
 
