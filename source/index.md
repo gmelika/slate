@@ -40,6 +40,59 @@ SFOX expects for the API key to be included in all API requests to the server in
 You must replace `<api_key>` with your personal API key.
 </aside>
 
+# Price Data
+
+## Get Best Price
+
+```shell
+curl "https://www.sfox.com/v1/offer/buy?amount=1"
+```
+
+> The result of the calls is something like this:
+
+```json
+{
+  "quantity":1,
+  "vwap":383.00,
+  "price":383.21,
+  "fees":0.95,
+  "total":382.26
+}
+```
+
+This will return the limit price you need to specify for this order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.
+
+To get the sell price simply change "buy" to "sell" in the url.
+
+You can use the "price" returned to you in the limit order you're placing.  "vwap" on the other hand is the expected average execution price. Even though the price is 383.21 in this example, you should expect to pay $383 (vwap * quantity)
+
+## Get Orderbook
+
+```shell
+curl "https://www.sfox.com/v1/markets/orderbook"
+```
+
+> The result of the calls is an array of bids and asks:
+
+```json
+{
+  "bids":[
+    [383.26,0.53,"bitstamp"],
+    [383.2,1.02069829,"bitstamp"],
+    [383.18,0.03914609,"bitstamp"],
+    [381.01,1.97630598,"bitfinex"],
+    [380.93,0.705,"bitfinex"]
+  ],
+  "asks":[
+    [381.06,0.01,"bitfinex"],
+    [381.1,5,"bitfinex"],
+    [383.74,1.307,"bitstamp"]
+  ]
+}
+```
+
+This will return the blended orderbook of all the available exchanges.
+
 # User
 
 ## Get Account Balance
