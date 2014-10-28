@@ -197,6 +197,43 @@ amount | The amount you wish to deposit from your bank account
 
 # Orders
 
+## Buy Now
+
+```shell
+curl "https://www.sfox.com/v1/orders/buy"
+  -u "<api_key>:"
+  -d "quantity=1"
+```
+
+> The above command returns the same JSON object as the Order Status API, and it is structured like this:
+
+```json
+{
+  "id": 666,
+  "quantity": 1,
+  "price": 10,
+  "o_action": "Buy",
+  "pair": "BTCUSD",
+  "type": "Limit",
+  "vwap": 0,
+  "filled": 0,
+  "status": "Started"
+}
+```
+
+This is a market order request to buy certain quantity of bitcoin.  Since this is a "Buy Now" order, it will execute immediately.
+
+### HTTP Request
+
+`POST https://www.sfox.com/v1/orders/buy`
+
+### Query Parameters
+
+Parameter | Description
+--------- | -----------
+quantity | the amount of bitcoin you wish to buy
+
+
 ## Buy Bitcoin
 
 ```shell
@@ -235,7 +272,42 @@ Parameter | Description
 quantity | the amount of bitcoin you wish to buy
 price | the max price you are willing to pay.  The executed price will always be less than or equal to this price if the market conditions allow it, otherwise the order will not execute.
 
+## Sell Now
 
+```shell
+curl "https://www.sfox.com/v1/orders/sell"
+  -u "<api_key>:"
+  -d "quantity=1"
+```
+
+> The above command returns the same JSON object as the Order Status API, and it is structured like this:
+
+```json
+{
+  "id": 667,
+  "quantity": 1,
+  "price": 10,
+  "o_action": "Sell",
+  "pair": "BTCUSD",
+  "type": "Limit",
+  "vwap": 0,
+  "filled": 0,
+  "status": "Started"
+}
+```
+This is a market order request to sell certain quantity of bitcoin.  Since this is a "Sell Now" order, it will execute immediately.
+
+
+### HTTP Request
+
+`POST https://www.sfox.com/v1/orders/sell`
+
+### Query Parameters
+
+Parameter | Description
+--------- | -----------
+quantity | the amount of bitcoin you wish to buy
+price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
 
 
 ## Sell Bitcoin
@@ -275,7 +347,6 @@ Parameter | Description
 --------- | -----------
 quantity | the amount of bitcoin you wish to buy
 price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
-
 
 
 
