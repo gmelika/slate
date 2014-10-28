@@ -222,7 +222,7 @@ curl "https://www.sfox.com/v1/orders/buy"
 }
 ```
 
-This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If there is an issue with the request you will get the reason in the "error" field.
+This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the "error" field.
 
 ### HTTP Request
 
@@ -263,7 +263,7 @@ curl "https://www.sfox.com/v1/orders/sell"
 }
 ```
 
-This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If there is an issue with the request you will get the reason in the "error" field.
+This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the "error" field.
 
 ### HTTP Request
 
