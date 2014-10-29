@@ -16,7 +16,7 @@ search: true
 
 # Introduction
 
-Welcome to the SFOX API! The SFOX API allows you to connect your application to our platform execute trades, deposit and withdraw without going through the web interface.
+Welcome to the SFOX API! The API allows you to connect your application to SFOX, execute trades, and deposit and withdraw currencies.
 
 # Authentication
 
@@ -30,9 +30,9 @@ curl "api_endpoint_here"
 
 > Make sure to replace `<api_key>` with your API key, and don't forget the colon.
 
-SFOX uses API keys to allow access to the API. You can register a new SFOX API key at our [developer portal](http://sfox.com/#/account/api).
+SFOX uses API keys to grant access. You can create a new SFOX API key at our [developer portal](http://sfox.com/#/account/api).
 
-SFOX expects for the API key to be included in all API requests to the server in a header that looks like the following:
+The API key should be included in all API requests to the server in a header that looks like the following:
 
 `Authorization: Bearer <api_key>`
 
@@ -60,11 +60,24 @@ curl "https://www.sfox.com/v1/offer/buy?amount=1"
 }
 ```
 
-This will return the limit price you need to specify for this order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.
+This will return the price you need to specify for a limir order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.  If you want to trade now, we recommend using Buy Now and Sell Now calls and not limit orders.
 
 To get the sell price simply change "buy" to "sell" in the url.
 
-You can use the "price" returned to you in the limit order you're placing.  "vwap" on the other hand is the expected average execution price. Even though the price is 383.21 in this example, you should expect to pay $383 (vwap * quantity)
+Use the "price" returned to you as the price in limit order you're placing.
+
+We also return VWAP - Volume weighted average price.  "vwap" is the expected price you will pay for the entire order.  Even though the price is 383.21 in this example, you will most likely pay $383 for the entire order.  These prices are not guaranteed as the market is always moving.  
+
+### HTTP Request
+
+`GET https://www.sfox.com/v1/offer/buy?quantity`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+quantity||The number of bitcoin you will be trading
+
 
 ## Get Orderbook
 
@@ -93,6 +106,16 @@ curl "https://www.sfox.com/v1/markets/orderbook"
 
 This will return the blended orderbook of all the available exchanges.
 
+### HTTP Request
+
+`GET https://www.sfox.com/v1/markets/orderbook`
+
+### Query Parameters
+
+Parameter | Default | Description
+--------- | ------- | -----------
+NONE
+
 # User
 
 ## Get Account Balance
@@ -119,7 +142,9 @@ curl "https://www.sfox.com/v1/user/balance"
 ]
 ```
 
-This endpoint retrieves all the balances for your account.  It returns an array of objects, each of which has details for a single currency.  As this example return object is demonstrating you can have different values for balance and available.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is reserved; either in an open trade or a withdrawal request.
+Use this endpoint to access your account balance.  It returns an array of objects, each of which has details for a single currency.  
+
+You will get Balance and Available balance.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is amount that is reserved either in an open trade or pending a withdrawal request.
 
 ### HTTP Request
 
@@ -130,6 +155,37 @@ This endpoint retrieves all the balances for your account.  It returns an array 
 Parameter | Default | Description
 --------- | ------- | -----------
 NONE
+
+## Request an ACH deposit
+
+```shell
+curl "https://www.sfox.com/v1/user/withdraw"
+  -H "Authorization: <api_key>"
+  -d "amount=1"
+```
+
+> The above command returns JSON structured like this:
+
+```json
+{
+  "success": true
+}
+```
+
+You can transfer funds from your bank account to SFOX using ACH.  You have to setup your bank account by going to [Accounts / Deposits](https://www.sfox.com/#/account/deposit).  Once you have setup your bank account, you can use this call to initiate the transfer request.
+
+<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
+
+### HTTP Request
+
+`POST https://www.sfox.com/v1/user/deposit`
+
+### Form Parameters
+
+Parameter | Description
+--------- | -----------
+amount | The amount you wish to deposit from your bank account
+
 
 ## Withdraw Funds
 
@@ -149,7 +205,7 @@ curl "https://www.sfox.com/v1/user/withdraw"
 }
 ```
 
-This endpoint submits a withdrawal request to SFOX.
+Submits a coin or currency withdrawal request to SFOX.  Your funds must be available before requesting withdrawal.  For fiat currency withdrawal, your bank account must be setup prior to making the withdrawal request.  You can setup your bank account by going to [Accounts / Deposits](https://www.sfox.com/#/account/deposit).
 
 <aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
 
@@ -165,35 +221,6 @@ amount | The amount you wish to withdraw
 currency | Currency is one of: usd or btc
 address | if currency == btc this field has to be a valid mainnet bitcoin address. Otherwise leave it out or empty
 
-## Request an ACH deposit
-
-```shell
-curl "https://www.sfox.com/v1/user/withdraw"
-  -H "Authorization: <api_key>"
-  -d "amount=1"
-```
-
-> The above command returns JSON structured like this:
-
-```json
-{
-  "success": true
-}
-```
-
-This endpoint submits an ach deposit request to SFOX.
-
-<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
-
-### HTTP Request
-
-`POST https://www.sfox.com/v1/user/deposit`
-
-### Form Parameters
-
-Parameter | Description
---------- | -----------
-amount | The amount you wish to deposit from your bank account
 
 # Orders
 
