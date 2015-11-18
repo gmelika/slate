@@ -43,23 +43,34 @@ You're going to need:
 
 ### Getting Set Up
 
- 1. Fork this repository on Github.
- 2. Clone *your forked repository* (not our original one) to your hard drive with `git clone https://github.com/YOURUSERNAME/slate.git`
- 3. `cd slate`
- 4. Install all dependencies: `bundle install`
- 5. Start the test server: `bundle exec middleman server`
+1. Fork this repository on Github.
+2. Clone *your forked repository* (not our original one) to your hard drive with `git clone https://github.com/YOURUSERNAME/slate.git`
+3. `cd slate`
+4. Initialize and start (there are a few options for this):
+ 
+#### Manual/local
 
-Or use the included Dockerfile! (must install Docker first)
+```shell
+bundle install
+bundle exec middleman server
+```    
+#### Via Docker (must install Docker first)
 
 ```shell
 docker build -t slate .
 docker run -d -p 4567:4567 --name slate -v $(pwd)/source:/app/source slate
+```    
+
+You can now see the docs at http://localhost:4567. Whoa! That was fast! 
+
+*Note: if you're using the Docker setup on OSX, the docs will be availalable at the output of `boot2docker ip` instead of `localhost:4567`.*
+
+#### Via Vagrant
+```shell
+vagrant up
 ```
 
-You can now see the docs at <http://localhost:4567>. Whoa! That was fast!
-
-*Note: if you're using the Docker setup on OSX, the docs will be
-availalable at the output of `boot2docker ip` instead of `localhost:4567`.*
+You can now see the docs at http://localhost:4567.
 
 Now that Slate is all set up your machine, you'll probably want to learn more about [editing Slate markdown](https://github.com/tripit/slate/wiki/Markdown-Syntax), or [how to publish your docs](https://github.com/tripit/slate/wiki/Deploying-Slate).
 
@@ -69,6 +80,7 @@ Examples of Slate in the Wild
 * [Travis-CI's API docs](http://docs.travis-ci.com/api/)
 * [Mozilla's localForage docs](http://mozilla.github.io/localForage/)
 * [Mozilla Recroom](http://mozilla.github.io/recroom/)
+* [ChaiOne Gameplan API docs](http://chaione.github.io/gameplanb2b/#introduction)
 * [Drcaban's Build a Quine tutorial](http://drcabana.github.io/build-a-quine/#introduction)
 * [PricePlow API docs](https://www.priceplow.com/api/documentation)
 * [Emerging Threats API docs](http://apidocs.emergingthreats.net/)
@@ -85,7 +97,7 @@ Examples of Slate in the Wild
 * [Whispir.io API](https://whispir.github.io/api)
 * [NASA API](https://data.nasa.gov/developer/external/planetary/)
 * [CardPay API](https://developers.cardpay.com/)
-* [IBM Cloudant](https://docs.cloudant.com/api.html)
+* [IBM Cloudant](https://docs-testb.cloudant.com/content-review/_design/couchapp/index.html)
 * [Bitrix basis components](http://bbc.bitrix.expert/)
 * [viagogo API Documentation](http://developer.viagogo.net/)
 * [Fidor Bank API Documentation](http://docs.fidor.de/)
@@ -96,9 +108,8 @@ Examples of Slate in the Wild
 * [SocialRadar's LocationKit Docs](https://docs.locationkit.io/)
 * [SafetyCulture API Documentation](https://developer.safetyculture.io/)
 * [hosting.de API Documentation](https://www.hosting.de/docs/api/)
-* [BlockCypher's API Documentation](http://dev.blockcypher.com)
-* [InterServer API Documentation](https://my.interserver.net/apidoc/)
-* [ActionHeroJS's API Documentation](http://www.actionherojs.com/docs)
+* [CheddarGetter API Documentation](http://docs.cheddargetter.com)
+* [Invoiced API](https://invoiced.com/docs/api)
 
 (Feel free to add your site to this list in a pull request!)
 
