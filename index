@@ -23,7 +23,7 @@ curl <span class="s2">"api_endpoint_here"</span>
 <p><code class="prettyprint">Authorization: Bearer &lt;api_key&gt;</code></p>
 
 <aside class="notice">
-You must replace `<api_key>` with your personal API key.
+You must replace ` <api_key> ` with your personal API key.
 </aside>
 
 <h1 id="price-data">Price Data</h1>
