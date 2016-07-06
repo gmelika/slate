@@ -16,7 +16,7 @@ curl <span class="s2">"api_endpoint_here"</span>
 <p>Make sure to replace <code class="prettyprint">&lt;api_key&gt;</code> with your API key, and don&rsquo;t forget the colon.</p>
 </blockquote>
 
-<p>SFOX uses API keys to allow access to the API. You can register a new SFOX API key at our <a href="http://sfox.com/#/account/api">developer portal</a>.</p>
+<p>SFOX uses API keys to allow access to the API. You can register a new SFOX API key at our <a href="https://trade.sfox.com/account/api">developer portal</a>.</p>
 
 <p>SFOX expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
 
@@ -29,7 +29,7 @@ You must replace `<api_key>` with your personal API key.
 <h1 id="price-data">Price Data</h1>
 
 <h2 id="get-best-price">Get Best Price</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/offer/buy?amount=1"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/offer/buy?amount=1"</span>
 </code></pre>
 
 <blockquote>
@@ -51,7 +51,7 @@ You must replace `<api_key>` with your personal API key.
 <p>You can use the &ldquo;price&rdquo; returned to you in the limit order you&rsquo;re placing.  &ldquo;vwap&rdquo; on the other hand is the expected average execution price. Even though the price is 383.21 in this example, you should expect to pay $383 (vwap * quantity)</p>
 
 <h2 id="get-orderbook">Get Orderbook</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/markets/orderbook"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/markets/orderbook"</span>
 </code></pre>
 
 <blockquote>
@@ -78,7 +78,7 @@ You must replace `<api_key>` with your personal API key.
 <h1 id="user">User</h1>
 
 <h2 id="get-account-balance">Get Account Balance</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/user/balance"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/user/balance"</span>
   -u <span class="s2">"&lt;api_key&gt;:"</span>
 </code></pre>
 
@@ -103,7 +103,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://www.sfox.com/v1/balance</code></p>
+<p><code class="prettyprint">GET https://api.sfox.com/v1/balance</code></p>
 
 <h3 id="query-parameters">Query Parameters</h3>
 
@@ -119,7 +119,7 @@ You must replace `<api_key>` with your personal API key.
 <p>NONE</p>
 
 <h2 id="withdraw-funds">Withdraw Funds</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/user/withdraw"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/user/withdraw"</span>
   -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
   -d <span class="s2">"amount=1"</span>
   -d <span class="s2">"address="</span>
@@ -140,7 +140,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://www.sfox.com/v1/user/withdraw</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v1/user/withdraw</code></p>
 
 <h3 id="form-parameters">Form Parameters</h3>
 
@@ -165,7 +165,7 @@ You must replace `<api_key>` with your personal API key.
 </tbody></table>
 
 <h2 id="request-an-ach-deposit">Request an ACH deposit</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/user/withdraw"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/user/withdraw"</span>
   -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
   -d <span class="s2">"amount=1"</span>
 </code></pre>
@@ -184,7 +184,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://www.sfox.com/v1/user/deposit</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v1/user/deposit</code></p>
 
 <h3 id="form-parameters">Form Parameters</h3>
 
@@ -203,7 +203,7 @@ You must replace `<api_key>` with your personal API key.
 <h1 id="orders">Orders</h1>
 
 <h2 id="buy-bitcoin">Buy Bitcoin</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/orders/buy"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders/buy"</span>
   -u <span class="s2">"&lt;api_key&gt;:"</span>
   -d <span class="s2">"quantity=1"</span>
   -d <span class="s2">"price=10"</span>
@@ -229,7 +229,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://www.sfox.com/v1/orders/buy</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/buy</code></p>
 
 <h3 id="query-parameters">Query Parameters</h3>
 
@@ -250,7 +250,7 @@ You must replace `<api_key>` with your personal API key.
 </tbody></table>
 
 <h2 id="sell-bitcoin">Sell Bitcoin</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/orders/sell"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders/sell"</span>
   -u <span class="s2">"&lt;api_key&gt;:"</span>
   -d <span class="s2">"quantity=1"</span>
   -d <span class="s2">"price=10"</span>
@@ -276,7 +276,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://www.sfox.com/v1/orders/sell</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/sell</code></p>
 
 <h3 id="query-parameters">Query Parameters</h3>
 
@@ -297,7 +297,7 @@ You must replace `<api_key>` with your personal API key.
 </tbody></table>
 
 <h2 id="get-order-status">Get Order Status</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/order/&lt;order_id&gt;"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/order/&lt;order_id&gt;"</span>
   -u <span class="s2">"&lt;api_key&gt;:"</span>
 </code></pre>
 
@@ -321,7 +321,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://www.sfox.com/v1/order/&lt;order_id&gt;</code></p>
+<p><code class="prettyprint">GET https://api.sfox.com/v1/order/&lt;order_id&gt;</code></p>
 
 <h3 id="possible-quot-status-quot-values">Possible &ldquo;status&rdquo; values</h3>
 
@@ -354,7 +354,7 @@ You must replace `<api_key>` with your personal API key.
 </tbody></table>
 
 <h2 id="get-active-orders">Get Active Orders</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/orders"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders"</span>
   -u <span class="s2">"&lt;api_key&gt;:"</span>
 </code></pre>
 
@@ -391,7 +391,7 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://www.sfox.com/v1/orders</code></p>
+<p><code class="prettyprint">GET https://api.sfox.com/v1/orders</code></p>
 
 <h3 id="possible-quot-status-quot-values">Possible &ldquo;status&rdquo; values</h3>
 
@@ -424,7 +424,7 @@ You must replace `<api_key>` with your personal API key.
 </tbody></table>
 
 <h2 id="cancel-order">Cancel Order</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/order/&lt;order_id&gt;"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/order/&lt;order_id&gt;"</span>
   -u <span class="s2">"&lt;api_key&gt;:"</span>
   -X DELETE
 </code></pre>
@@ -437,4 +437,4 @@ You must replace `<api_key>` with your personal API key.
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">DELETE https://www.sfox.com/v1/order/&lt;order_id&gt;</code></p>
+<p><code class="prettyprint">DELETE https://api.sfox.com/v1/order/&lt;order_id&gt;</code></p>
