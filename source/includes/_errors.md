@@ -2,7 +2,7 @@
 
 <aside class="notice">The SFOX API communicates error codes through HTTP status codes.  The following are the error codes currently in use.</aside>
 
-The Kittn API uses the following error codes:
+The SFOX API uses the following error codes:
 
 
 Error Code | Meaning
