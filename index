@@ -1,125 +1,6 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>API Reference</title>
+<h1 id="introduction">Introduction</h1>
 
-    <style>
-      .highlight table td { padding: 5px; }
-.highlight table pre { margin: 0; }
-.highlight, .highlight .w {
-  color: #f8f8f2;
-  background-color: #272822;
-}
-.highlight .err {
-  color: #151515;
-  background-color: #ac4142;
-}
-.highlight .c, .highlight .cd, .highlight .cm, .highlight .c1, .highlight .cs {
-  color: #505050;
-}
-.highlight .cp {
-  color: #f4bf75;
-}
-.highlight .nt {
-  color: #f4bf75;
-}
-.highlight .o, .highlight .ow {
-  color: #d0d0d0;
-}
-.highlight .p, .highlight .pi {
-  color: #d0d0d0;
-}
-.highlight .gi {
-  color: #90a959;
-}
-.highlight .gd {
-  color: #ac4142;
-}
-.highlight .gh {
-  color: #6a9fb5;
-  background-color: #151515;
-  font-weight: bold;
-}
-.highlight .k, .highlight .kn, .highlight .kp, .highlight .kr, .highlight .kv {
-  color: #aa759f;
-}
-.highlight .kc {
-  color: #d28445;
-}
-.highlight .kt {
-  color: #d28445;
-}
-.highlight .kd {
-  color: #d28445;
-}
-.highlight .s, .highlight .sb, .highlight .sc, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .s1 {
-  color: #90a959;
-}
-.highlight .sr {
-  color: #75b5aa;
-}
-.highlight .si {
-  color: #8f5536;
-}
-.highlight .se {
-  color: #8f5536;
-}
-.highlight .nn {
-  color: #f4bf75;
-}
-.highlight .nc {
-  color: #f4bf75;
-}
-.highlight .no {
-  color: #f4bf75;
-}
-.highlight .na {
-  color: #6a9fb5;
-}
-.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mb, .highlight .mx {
-  color: #90a959;
-}
-.highlight .ss {
-  color: #90a959;
-}
-    </style>
-    <link href="stylesheets/screen.css" rel="stylesheet" media="screen" />
-    <link href="stylesheets/print.css" rel="stylesheet" media="print" />
-      <script src="javascripts/all.js"></script>
-  </head>
-
-  <body class="index" data-languages="[&quot;shell&quot;]">
-    <a href="#" id="nav-button">
-      <span>
-        NAV
-        <img src="images/navbar.png" />
-      </span>
-    </a>
-    <div class="tocify-wrapper">
-      <img src="images/logo.png" />
-        <div class="lang-selector">
-              <a href="#" data-language-name="shell">shell</a>
-        </div>
-        <div class="search">
-          <input type="text" class="search" id="input-search" placeholder="Search">
-        </div>
-        <ul class="search-results"></ul>
-      <div id="toc">
-      </div>
-        <ul class="toc-footer">
-            <li><a href='/#/account/api'>Sign Up for a Developer Key</a></li>
-            <li><a href='mailto:support@sfox.com'>Need help? Email us</a></li>
-        </ul>
-    </div>
-    <div class="page-wrapper">
-      <div class="dark-box"></div>
-      <div class="content">
-        <h1 id="introduction">Introduction</h1>
-
-<p>Welcome to the SFOX API! The API allows you to connect your application to SFOX, execute trades, and deposit and withdraw currencies.</p>
+<p>Welcome to the SFOX API! The SFOX API allows you to connect your application to our platform execute trades, deposit and withdraw without going through the web interface.</p>
 
 <h1 id="authentication">Authentication</h1>
 
@@ -135,9 +16,9 @@ curl <span class="s2">"api_endpoint_here"</span>
 <p>Make sure to replace <code class="prettyprint">&lt;api_key&gt;</code> with your API key, and don&rsquo;t forget the colon.</p>
 </blockquote>
 
-<p>SFOX uses API keys to grant access. You can create a new SFOX API key at our <a href="http://sfox.com/#/account/api">developer portal</a>.</p>
+<p>SFOX uses API keys to allow access to the API. You can register a new SFOX API key at our <a href="http://sfox.com/#/account/api">developer portal</a>.</p>
 
-<p>The API key should be included in all API requests to the server in a header that looks like the following:</p>
+<p>SFOX expects for the API key to be included in all API requests to the server in a header that looks like the following:</p>
 
 <p><code class="prettyprint">Authorization: Bearer &lt;api_key&gt;</code></p>
 
@@ -163,33 +44,11 @@ You must replace `<api_key>` with your personal API key.
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This will return the price you need to specify for a limir order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.  If you want to trade now, we recommend using Buy Now and Sell Now calls and not limit orders.</p>
+<p>This will return the limit price you need to specify for this order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.</p>
 
 <p>To get the sell price simply change &ldquo;buy&rdquo; to &ldquo;sell&rdquo; in the url.</p>
 
-<p>Use the &ldquo;price&rdquo; returned to you as the price in limit order you&rsquo;re placing.</p>
-
-<p>We also return VWAP - Volume weighted average price.  &ldquo;vwap&rdquo; is the expected price you will pay for the entire order.  Even though the price is 383.21 in this example, you will most likely pay $383 for the entire order.  These prices are not guaranteed as the market is always moving.  </p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://www.sfox.com/v1/offer/buy?quantity</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>quantity</td>
-<td></td>
-<td>The number of bitcoin you will be trading</td>
-</tr>
-</tbody></table>
+<p>You can use the &ldquo;price&rdquo; returned to you in the limit order you&rsquo;re placing.  &ldquo;vwap&rdquo; on the other hand is the expected average execution price. Even though the price is 383.21 in this example, you should expect to pay $383 (vwap * quantity)</p>
 
 <h2 id="get-orderbook">Get Orderbook</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/markets/orderbook"</span>
@@ -216,23 +75,6 @@ You must replace `<api_key>` with your personal API key.
 
 <p>This will return the blended orderbook of all the available exchanges.</p>
 
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://www.sfox.com/v1/markets/orderbook</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-</tbody></table>
-
-<p>NONE</p>
-
 <h1 id="user">User</h1>
 
 <h2 id="get-account-balance">Get Account Balance</h2>
@@ -257,9 +99,7 @@ You must replace `<api_key>` with your personal API key.
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
 
-<p>Use this endpoint to access your account balance.  It returns an array of objects, each of which has details for a single currency.  </p>
-
-<p>You will get Balance and Available balance.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is amount that is reserved either in an open trade or pending a withdrawal request.</p>
+<p>This endpoint retrieves all the balances for your account.  It returns an array of objects, each of which has details for a single currency.  As this example return object is demonstrating you can have different values for balance and available.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is reserved; either in an open trade or a withdrawal request.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -278,42 +118,6 @@ You must replace `<api_key>` with your personal API key.
 
 <p>NONE</p>
 
-<h2 id="request-an-ach-deposit">Request an ACH deposit</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/user/withdraw"</span>
-  -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
-  -d <span class="s2">"amount=1"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>You can transfer funds from your bank account to SFOX using ACH.  You have to setup your bank account by going to <a href="https://www.sfox.com/#/account/deposit">Accounts / Deposits</a>.  Once you have setup your bank account, you can use this call to initiate the transfer request.</p>
-
-<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://www.sfox.com/v1/user/deposit</code></p>
-
-<h3 id="form-parameters">Form Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>amount</td>
-<td>The amount you wish to deposit from your bank account</td>
-</tr>
-</tbody></table>
-
 <h2 id="withdraw-funds">Withdraw Funds</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/user/withdraw"</span>
   -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
@@ -330,7 +134,7 @@ You must replace `<api_key>` with your personal API key.
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>Submits a coin or currency withdrawal request to SFOX.  Your funds must be available before requesting withdrawal.  For fiat currency withdrawal, your bank account must be setup prior to making the withdrawal request.  You can setup your bank account by going to <a href="https://www.sfox.com/#/account/deposit">Accounts / Deposits</a>.</p>
+<p>This endpoint submits a withdrawal request to SFOX.</p>
 
 <aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
 
@@ -360,37 +164,29 @@ You must replace `<api_key>` with your personal API key.
 </tr>
 </tbody></table>
 
-<h1 id="orders">Orders</h1>
-
-<h2 id="buy-now">Buy Now</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/orders/buy"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -d <span class="s2">"quantity=1"</span>
+<h2 id="request-an-ach-deposit">Request an ACH deposit</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/user/withdraw"</span>
+  -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
+  -d <span class="s2">"amount=1"</span>
 </code></pre>
 
 <blockquote>
-<p>The above command returns the same JSON object as the Order Status API, and it is structured like this:</p>
+<p>The above command returns JSON structured like this:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">666</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
+  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This is a market order request to buy certain quantity of bitcoin.  Since this is a &ldquo;Buy Now&rdquo; order, it will execute immediately.</p>
+<p>This endpoint submits an ach deposit request to SFOX.</p>
+
+<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://www.sfox.com/v1/orders/buy</code></p>
+<p><code class="prettyprint">POST https://www.sfox.com/v1/user/deposit</code></p>
 
-<h3 id="query-parameters">Query Parameters</h3>
+<h3 id="form-parameters">Form Parameters</h3>
 
 <table><thead>
 <tr>
@@ -399,10 +195,12 @@ You must replace `<api_key>` with your personal API key.
 </tr>
 </thead><tbody>
 <tr>
-<td>quantity</td>
-<td>the amount of bitcoin you wish to buy</td>
+<td>amount</td>
+<td>The amount you wish to deposit from your bank account</td>
 </tr>
 </tbody></table>
+
+<h1 id="orders">Orders</h1>
 
 <h2 id="buy-bitcoin">Buy Bitcoin</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/orders/buy"</span>
@@ -419,7 +217,7 @@ You must replace `<api_key>` with your personal API key.
   </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
   </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
   </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BTCUSD"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
@@ -427,7 +225,7 @@ You must replace `<api_key>` with your personal API key.
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the &ldquo;error&rdquo; field.</p>
+<p>This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If there is an issue with the request you will get the reason in the &ldquo;error&rdquo; field.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -449,76 +247,6 @@ You must replace `<api_key>` with your personal API key.
 <td>price</td>
 <td>the max price you are willing to pay.  The executed price will always be less than or equal to this price if the market conditions allow it, otherwise the order will not execute.</td>
 </tr>
-<tr>
-<td>algorithm_id</td>
-<td>the <a href="#algorithm-ids">algorithm id</a> you wish to use to execute the order (default: 200)</td>
-</tr>
-<tr>
-<td>client_order_id</td>
-<td>this is an optional field that will hold a user specified id for reference</td>
-</tr>
-<tr>
-<td>currency_pair</td>
-<td>the currency pair you wish to trade (default: btcusd)</td>
-</tr>
-</tbody></table>
-
-<h2 id="sell-now">Sell Now</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://www.sfox.com/v1/orders/sell"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -d <span class="s2">"quantity=1"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns the same JSON object as the Order Status API, and it is structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">667</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sell"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This is a market order request to sell certain quantity of bitcoin.  Since this is a &ldquo;Sell Now&rdquo; order, it will execute immediately.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://www.sfox.com/v1/orders/sell</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>quantity</td>
-<td>the amount of bitcoin you wish to buy</td>
-</tr>
-<tr>
-<td>price</td>
-<td>the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.</td>
-</tr>
-<tr>
-<td>algorithm_id</td>
-<td>the <a href="#algorithm-ids">algorithm id</a> you wish to use to execute the order (default: 200)</td>
-</tr>
-<tr>
-<td>client_order_id</td>
-<td>this is an optional field that will hold a user specified id for reference</td>
-</tr>
-<tr>
-<td>currency_pair</td>
-<td>the currency pair you wish to trade (default: btcusd)</td>
-</tr>
 </tbody></table>
 
 <h2 id="sell-bitcoin">Sell Bitcoin</h2>
@@ -536,7 +264,7 @@ You must replace `<api_key>` with your personal API key.
   </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
   </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
   </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sell"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BTCUSD"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
@@ -544,7 +272,7 @@ You must replace `<api_key>` with your personal API key.
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the &ldquo;error&rdquo; field.</p>
+<p>This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If there is an issue with the request you will get the reason in the &ldquo;error&rdquo; field.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -581,7 +309,7 @@ You must replace `<api_key>` with your personal API key.
   </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
   </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
   </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BTCUSD"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
@@ -639,7 +367,7 @@ You must replace `<api_key>` with your personal API key.
     </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
     </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BTCUSD"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
     </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
@@ -650,7 +378,7 @@ You must replace `<api_key>` with your personal API key.
     </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
     </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
     </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sell"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"BTCUSD"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
     </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
@@ -710,105 +438,3 @@ You must replace `<api_key>` with your personal API key.
 <h3 id="http-request">HTTP Request</h3>
 
 <p><code class="prettyprint">DELETE https://www.sfox.com/v1/order/&lt;order_id&gt;</code></p>
-
-<h2 id="algorithm-ids">Algorithm IDs</h2>
-
-<table><thead>
-<tr>
-<th>ID</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>Smart Routing</td>
-</tr>
-<tr>
-<td>301</td>
-<td>Goliath</td>
-</tr>
-<tr>
-<td>302</td>
-<td>Tortoise</td>
-</tr>
-<tr>
-<td>303</td>
-<td>Hare</td>
-</tr>
-<tr>
-<td>304</td>
-<td>Stop-Loss</td>
-</tr>
-<tr>
-<td>305</td>
-<td>Polar Bear</td>
-</tr>
-<tr>
-<td>306</td>
-<td>Sniper</td>
-</tr>
-<tr>
-<td>307</td>
-<td>TWAP</td>
-</tr>
-</tbody></table>
-
-          <h1 id="errors">Errors</h1>
-
-<aside class="notice">The SFOX API communicates error codes through HTTP status codes.  The following are the error codes currently in use.</aside>
-
-<p>The SFOX API uses the following error codes:</p>
-
-<table><thead>
-<tr>
-<th>Error Code</th>
-<th>Meaning</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>400</td>
-<td>Bad Request &ndash; Your request was malformed in some way</td>
-</tr>
-<tr>
-<td>401</td>
-<td>Unauthorized &ndash; Your API key is wrong</td>
-</tr>
-<tr>
-<td>403</td>
-<td>Forbidden &ndash; The API key is not authorized for this endpoint</td>
-</tr>
-<tr>
-<td>404</td>
-<td>Not Found &ndash; The specified endpoint could not be found</td>
-</tr>
-<tr>
-<td>405</td>
-<td>Method Not Allowed &ndash; You tried to access a endpoint with an invalid method</td>
-</tr>
-<tr>
-<td>406</td>
-<td>Not Acceptable &ndash; You requested a format that isn&rsquo;t json</td>
-</tr>
-<tr>
-<td>429</td>
-<td>Too Many Requests &ndash; You have exceeded your request limit</td>
-</tr>
-<tr>
-<td>500</td>
-<td>Internal Server Error &ndash; We had a problem with our server. Try again later.</td>
-</tr>
-<tr>
-<td>503</td>
-<td>Service Unavailable &ndash; We&rsquo;re temporarially offline for maintanance. Please try again later.</td>
-</tr>
-</tbody></table>
-
-      </div>
-      <div class="dark-box">
-          <div class="lang-selector">
-                <a href="#" data-language-name="shell">shell</a>
-          </div>
-      </div>
-    </div>
-  </body>
-</html>
