@@ -240,7 +240,7 @@ curl "https://www.sfox.com/v1/orders/buy"
   "quantity": 1,
   "price": 10,
   "o_action": "Buy",
-  "pair": "BTCUSD",
+  "pair": "btcusd",
   "type": "Limit",
   "vwap": 0,
   "filled": 0,
@@ -278,7 +278,7 @@ curl "https://www.sfox.com/v1/orders/buy"
   "quantity": 1,
   "price": 10,
   "o_action": "Buy",
-  "pair": "BTCUSD",
+  "pair": "btcusd",
   "type": "Limit",
   "vwap": 0,
   "filled": 0,
@@ -298,6 +298,10 @@ Parameter | Description
 --------- | -----------
 quantity | the amount of bitcoin you wish to buy
 price | the max price you are willing to pay.  The executed price will always be less than or equal to this price if the market conditions allow it, otherwise the order will not execute.
+algorithm_id | the [algorithm id](#algorithm-ids) you wish to use to execute the order (default: 200) 
+client_order_id | this is an optional field that will hold a user specified id for reference
+currency_pair | the currency pair you wish to trade (default: btcusd)
+
 
 ## Sell Now
 
@@ -315,7 +319,7 @@ curl "https://www.sfox.com/v1/orders/sell"
   "quantity": 1,
   "price": 10,
   "o_action": "Sell",
-  "pair": "BTCUSD",
+  "pair": "btcusd",
   "type": "Limit",
   "vwap": 0,
   "filled": 0,
@@ -335,6 +339,9 @@ Parameter | Description
 --------- | -----------
 quantity | the amount of bitcoin you wish to buy
 price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
+algorithm_id | the [algorithm id](#algorithm-ids) you wish to use to execute the order (default: 200) 
+client_order_id | this is an optional field that will hold a user specified id for reference
+currency_pair | the currency pair you wish to trade (default: btcusd)
 
 
 ## Sell Bitcoin
@@ -354,7 +361,7 @@ curl "https://www.sfox.com/v1/orders/sell"
   "quantity": 1,
   "price": 10,
   "o_action": "Sell",
-  "pair": "BTCUSD",
+  "pair": "btcusd",
   "type": "Limit",
   "vwap": 0,
   "filled": 0,
@@ -392,7 +399,7 @@ curl "https://www.sfox.com/v1/order/<order_id>"
   "quantity": 1,
   "price": 10,
   "o_action": "Buy",
-  "pair": "BTCUSD",
+  "pair": "btcusd",
   "type": "Limit",
   "vwap": 0,
   "filled": 0,
@@ -435,7 +442,7 @@ curl "https://www.sfox.com/v1/orders"
     "quantity": 1,
     "price": 10,
     "o_action": "Buy",
-    "pair": "BTCUSD",
+    "pair": "btcusd",
     "type": "Limit",
     "vwap": 0,
     "filled": 0,
@@ -446,7 +453,7 @@ curl "https://www.sfox.com/v1/orders"
     "quantity": 1,
     "price": 10,
     "o_action": "Sell",
-    "pair": "BTCUSD",
+    "pair": "btcusd",
     "type": "Limit",
     "vwap": 0,
     "filled": 0,
@@ -489,4 +496,16 @@ This endpoint will start cancelling the order specified.
 ### HTTP Request
 
 `DELETE https://www.sfox.com/v1/order/<order_id>`
+
+## Algorithm IDs
+ID | Description
+--------- | -----------
+200 | Smart Routing
+301 | Goliath
+302 | Tortoise
+303 | Hare
+304 | Stop-Loss
+305 | Polar Bear
+306 | Sniper
+307 | TWAP
 
