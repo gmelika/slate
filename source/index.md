@@ -37,7 +37,7 @@ SFOX expects for the API key to be included in all API requests to the server in
 `Authorization: Bearer <api_key>`
 
 <aside class="notice">
-You must replace `<api_key>` with your personal API key.
+You must replace ` <api_key> ` with your personal API key.
 </aside>
 
 # Price Data
