@@ -5,7 +5,7 @@ language_tabs:
   - shell
 
 toc_footers:
-  - <a href='/#/account/api'>Sign Up for a Developer Key</a>
+  - <a href='/account/api'>Sign Up for a Developer Key</a>
   - <a href='mailto:support@sfox.com'>Need help? Email us</a>
 
 includes:
@@ -28,7 +28,7 @@ curl "api_endpoint_here"
   -u "<api token>:"
 ```
 
-> Make sure to replace `<api_key>` with your API key, and don't forget the colon.
+> Make sure to replace <api_key> with your API key, and don't forget the colon.
 
 SFOX uses API keys to grant access. You can create a new SFOX API key at our [developer portal](http://sfox.com/#/account/api).
 
@@ -37,7 +37,7 @@ The API key should be included in all API requests to the server in a header tha
 `Authorization: Bearer <api_key>`
 
 <aside class="notice">
-You must replace `<api_key>` with your personal API key.
+You must replace `api_key` with your personal API key.
 </aside>
 
 # Price Data
@@ -45,7 +45,7 @@ You must replace `<api_key>` with your personal API key.
 ## Get Best Price
 
 ```shell
-curl "https://www.sfox.com/v1/offer/buy?amount=1"
+curl "https://api.sfox.com/v1/offer/buy?amount=1"
 ```
 
 > The result of the calls is something like this:
@@ -70,7 +70,7 @@ We also return VWAP - Volume weighted average price.  "vwap" is the expected pri
 
 ### HTTP Request
 
-`GET https://www.sfox.com/v1/offer/buy?quantity`
+`GET https://api.sfox.com/v1/offer/buy?quantity`
 
 ### Query Parameters
 
@@ -82,7 +82,7 @@ quantity||The number of bitcoin you will be trading
 ## Get Orderbook
 
 ```shell
-curl "https://www.sfox.com/v1/markets/orderbook"
+curl "https://api.sfox.com/v1/markets/orderbook"
 ```
 
 > The result of the calls is an array of bids and asks:
@@ -108,7 +108,7 @@ This will return the blended orderbook of all the available exchanges.
 
 ### HTTP Request
 
-`GET https://www.sfox.com/v1/markets/orderbook`
+`GET https://api.sfox.com/v1/markets/orderbook`
 
 ### Query Parameters
 
@@ -121,7 +121,7 @@ NONE
 ## Get Account Balance
 
 ```shell
-curl "https://www.sfox.com/v1/user/balance"
+curl "https://api.sfox.com/v1/user/balance"
   -u "<api_key>:"
 ```
 
@@ -148,7 +148,7 @@ You will get Balance and Available balance.  Balance is your total balance for t
 
 ### HTTP Request
 
-`GET https://www.sfox.com/v1/balance`
+`GET https://api.sfox.com/v1/balance`
 
 ### Query Parameters
 
@@ -159,7 +159,7 @@ NONE
 ## Request an ACH deposit
 
 ```shell
-curl "https://www.sfox.com/v1/user/withdraw"
+curl "https://api.sfox.com/v1/user/withdraw"
   -H "Authorization: <api_key>"
   -d "amount=1"
 ```
@@ -172,13 +172,13 @@ curl "https://www.sfox.com/v1/user/withdraw"
 }
 ```
 
-You can transfer funds from your bank account to SFOX using ACH.  You have to setup your bank account by going to [Accounts / Deposits](https://www.sfox.com/#/account/deposit).  Once you have setup your bank account, you can use this call to initiate the transfer request.
+You can transfer funds from your bank account to SFOX using ACH.  You have to setup your bank account by going to [Accounts / Deposits](https://api.sfox.com/#/account/deposit).  Once you have setup your bank account, you can use this call to initiate the transfer request.
 
 <aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
 
 ### HTTP Request
 
-`POST https://www.sfox.com/v1/user/deposit`
+`POST https://api.sfox.com/v1/user/deposit`
 
 ### Form Parameters
 
@@ -190,7 +190,7 @@ amount | The amount you wish to deposit from your bank account
 ## Withdraw Funds
 
 ```shell
-curl "https://www.sfox.com/v1/user/withdraw"
+curl "https://api.sfox.com/v1/user/withdraw"
   -H "Authorization: <api_key>"
   -d "amount=1"
   -d "address="
@@ -205,13 +205,13 @@ curl "https://www.sfox.com/v1/user/withdraw"
 }
 ```
 
-Submits a coin or currency withdrawal request to SFOX.  Your funds must be available before requesting withdrawal.  For fiat currency withdrawal, your bank account must be setup prior to making the withdrawal request.  You can setup your bank account by going to [Accounts / Deposits](https://www.sfox.com/#/account/deposit).
+Submits a coin or currency withdrawal request to SFOX.  Your funds must be available before requesting withdrawal.  For fiat currency withdrawal, your bank account must be setup prior to making the withdrawal request.  You can setup your bank account by going to [Accounts / Deposits](https://api.sfox.com/#/account/deposit).
 
 <aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
 
 ### HTTP Request
 
-`POST https://www.sfox.com/v1/user/withdraw`
+`POST https://api.sfox.com/v1/user/withdraw`
 
 ### Form Parameters
 
@@ -227,7 +227,7 @@ address | if currency == btc this field has to be a valid mainnet bitcoin addres
 ## Buy Now
 
 ```shell
-curl "https://www.sfox.com/v1/orders/buy"
+curl "https://api.sfox.com/v1/orders/buy"
   -u "<api_key>:"
   -d "quantity=1"
 ```
@@ -252,7 +252,7 @@ This is a market order request to buy certain quantity of bitcoin.  Since this i
 
 ### HTTP Request
 
-`POST https://www.sfox.com/v1/orders/buy`
+`POST https://api.sfox.com/v1/orders/buy`
 
 ### Query Parameters
 
@@ -264,7 +264,7 @@ quantity | the amount of bitcoin you wish to buy
 ## Buy Bitcoin
 
 ```shell
-curl "https://www.sfox.com/v1/orders/buy"
+curl "https://api.sfox.com/v1/orders/buy"
   -u "<api_key>:"
   -d "quantity=1"
   -d "price=10"
@@ -290,7 +290,7 @@ This endpoint initiates a buy order for bitcoin for the specified amount with th
 
 ### HTTP Request
 
-`POST https://www.sfox.com/v1/orders/buy`
+`POST https://api.sfox.com/v1/orders/buy`
 
 ### Query Parameters
 
@@ -306,7 +306,7 @@ currency_pair | the currency pair you wish to trade (default: btcusd)
 ## Sell Now
 
 ```shell
-curl "https://www.sfox.com/v1/orders/sell"
+curl "https://api.sfox.com/v1/orders/sell"
   -u "<api_key>:"
   -d "quantity=1"
 ```
@@ -331,7 +331,7 @@ This is a market order request to sell certain quantity of bitcoin.  Since this 
 
 ### HTTP Request
 
-`POST https://www.sfox.com/v1/orders/sell`
+`POST https://api.sfox.com/v1/orders/sell`
 
 ### Query Parameters
 
@@ -347,7 +347,7 @@ currency_pair | the currency pair you wish to trade (default: btcusd)
 ## Sell Bitcoin
 
 ```shell
-curl "https://www.sfox.com/v1/orders/sell"
+curl "https://api.sfox.com/v1/orders/sell"
   -u "<api_key>:"
   -d "quantity=1"
   -d "price=10"
@@ -373,7 +373,7 @@ This endpoint initiates a sell order for bitcoin for the specified amount with t
 
 ### HTTP Request
 
-`POST https://www.sfox.com/v1/orders/sell`
+`POST https://api.sfox.com/v1/orders/sell`
 
 ### Query Parameters
 
@@ -387,7 +387,7 @@ price | the min price you are willing to accept.  The executed price will always
 ## Get Order Status
 
 ```shell
-curl "https://www.sfox.com/v1/order/<order_id>"
+curl "https://api.sfox.com/v1/order/<order_id>"
   -u "<api_key>:"
 ```
 
@@ -411,7 +411,7 @@ This endpoint returns the status of the order specified by the <order_id> url pa
 
 ### HTTP Request
 
-`GET https://www.sfox.com/v1/order/<order_id>`
+`GET https://api.sfox.com/v1/order/<order_id>`
 
 ### Possible "status" values
 
@@ -429,7 +429,7 @@ Done | The order was completed successfully
 ## Get Active Orders
 
 ```shell
-curl "https://www.sfox.com/v1/orders"
+curl "https://api.sfox.com/v1/orders"
   -u "<api_key>:"
 ```
 
@@ -466,7 +466,7 @@ This endpoint returns an array of statuses for all active orders.
 
 ### HTTP Request
 
-`GET https://www.sfox.com/v1/orders`
+`GET https://api.sfox.com/v1/orders`
 
 ### Possible "status" values
 
@@ -484,7 +484,7 @@ Done | The order was completed successfully
 ## Cancel Order
 
 ```shell
-curl "https://www.sfox.com/v1/order/<order_id>"
+curl "https://api.sfox.com/v1/order/<order_id>"
   -u "<api_key>:"
   -X DELETE
 ```
@@ -495,7 +495,7 @@ This endpoint will start cancelling the order specified.
 
 ### HTTP Request
 
-`DELETE https://www.sfox.com/v1/order/<order_id>`
+`DELETE https://api.sfox.com/v1/order/<order_id>`
 
 ## Algorithm IDs
 ID | Description
