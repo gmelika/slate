@@ -504,22 +504,6 @@ You must replace `api_key` with your personal API key.
 <td>quantity</td>
 <td>the amount of bitcoin you wish to buy</td>
 </tr>
-<tr>
-<td>price</td>
-<td>the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.</td>
-</tr>
-<tr>
-<td>algorithm_id</td>
-<td>the <a href="#algorithm-ids">algorithm id</a> you wish to use to execute the order (default: 200)</td>
-</tr>
-<tr>
-<td>client_order_id</td>
-<td>this is an optional field that will hold a user specified id for reference</td>
-</tr>
-<tr>
-<td>currency_pair</td>
-<td>the currency pair you wish to trade (default: btcusd)</td>
-</tr>
 </tbody></table>
 
 <h2 id="sell-bitcoin">Sell Bitcoin</h2>
@@ -566,6 +550,18 @@ You must replace `api_key` with your personal API key.
 <tr>
 <td>price</td>
 <td>the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.</td>
+</tr>
+<tr>
+<td>algorithm_id</td>
+<td>the <a href="#algorithm-ids">algorithm id</a> you wish to use to execute the order (default: 200)</td>
+</tr>
+<tr>
+<td>client_order_id</td>
+<td>this is an optional field that will hold a user specified id for reference</td>
+</tr>
+<tr>
+<td>currency_pair</td>
+<td>the currency pair you wish to trade (default: btcusd)</td>
 </tr>
 </tbody></table>
 
