@@ -338,11 +338,6 @@ This is a market order request to sell certain quantity of bitcoin.  Since this 
 Parameter | Description
 --------- | -----------
 quantity | the amount of bitcoin you wish to buy
-price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
-algorithm_id | the [algorithm id](#algorithm-ids) you wish to use to execute the order (default: 200) 
-client_order_id | this is an optional field that will hold a user specified id for reference
-currency_pair | the currency pair you wish to trade (default: btcusd)
-
 
 ## Sell Bitcoin
 
@@ -381,6 +376,10 @@ Parameter | Description
 --------- | -----------
 quantity | the amount of bitcoin you wish to buy
 price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
+algorithm_id | the [algorithm id](#algorithm-ids) you wish to use to execute the order (default: 200) 
+client_order_id | this is an optional field that will hold a user specified id for reference
+currency_pair | the currency pair you wish to trade (default: btcusd)
+
 
 
 
