@@ -1,11 +1,11 @@
 ---
-title: API Reference
+title: Partner API Reference
 
 language_tabs:
   - shell
 
 toc_footers:
-  - <a href='/account/api'>Sign Up for a Developer Key</a>
+  - <a href='www.sfox.com/partners'>Sign Up for a Partner Account</a>
   - <a href='mailto:support@sfox.com'>Need help? Email us</a>
 
 includes:
@@ -16,239 +16,356 @@ search: true
 
 # Introduction
 
-Welcome to the SFOX API! The API allows you to connect your application to SFOX, execute trades, and deposit and withdraw currencies.
+Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.
 
-# Authentication
-
-> To authorize, use this code:
+> To create an account, use this code:
 
 ```shell
 # With shell, you can just pass the correct header with each request
-curl "api_endpoint_here"
-  -u "<api token>:"
+curl "https://api.sfox.com/v2/partner/<partner name>/<path>" \
+  -H "X-SFOX-PARTNER-ID: <partner id>"
 ```
 
-> Make sure to replace <api_key> with your API key, and don't forget the colon.
-
-SFOX uses API keys to grant access. You can create a new SFOX API key at our [developer portal](http://sfox.com/#/account/api).
-
-The API key should be included in all API requests to the server in a header that looks like the following:
-
-`Authorization: Bearer <api_key>`
+SFOX uses partner IDs only for tracking purposes.
 
 <aside class="notice">
-You must replace `api_key` with your personal API key.
+You must replace "partner id" with your partner id provided by sfox.
 </aside>
 
-# Price Data
+# Creating a Customer Account
 
-## Get Best Price
+This api allows you to create an account on SFOX for the customer.  This api will return an API token associated with this account which will allow you to submit requests on behalf of the customer.
+
+> To create an account, use this code:
 
 ```shell
-curl "https://api.sfox.com/v1/offer/buy?amount=1"
+# With shell, you can just pass the correct header with each request
+curl "https://api.sfox.com/v2/partner/<partner name>/account" \
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Content-type: application/json" \
+  -d "username=user@domain.com" \
+  -d "password=password123"
 ```
 
-> The result of the calls is something like this:
+> The result of the call will be something like this:
 
 ```json
 {
-  "quantity":1,
-  "vwap":383.00,
-  "price":383.21,
-  "fees":0.95,
-  "total":382.26
+  "token": "<account token>",
+  "account": {
+    "id": "user123",
+    "verification_status": {
+      "level": "unverified"
+    }
+    "can_buy": false,
+    "can_sell": false,
+    "limits": {
+      "usd": {
+        "available": {
+          "buy": 5000,
+          "sell": 5000
+        },
+        "total": {
+          "buy": 5000,
+          "sell": 5000
+        }
+      }
+    }
+  }
 }
 ```
 
-This will return the price you need to specify for a limir order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.  If you want to trade now, we recommend using Buy Now and Sell Now calls and not limit orders.
+# KYC
 
-To get the sell price simply change "buy" to "sell" in the url.
-
-Use the "price" returned to you as the price in limit order you're placing.
-
-We also return VWAP - Volume weighted average price.  "vwap" is the expected price you will pay for the entire order.  Even though the price is 383.21 in this example, you will most likely pay $383 for the entire order.  These prices are not guaranteed as the market is always moving.  
-
-### HTTP Request
-
-`GET https://api.sfox.com/v1/offer/buy?quantity`
-
-### Query Parameters
-
-Parameter | Default | Description
---------- | ------- | -----------
-quantity||The number of bitcoin you will be trading
-
-
-## Get Orderbook
+## Verify Account
 
 ```shell
-curl "https://api.sfox.com/v1/markets/orderbook"
+curl "https://api.sfox.com/v2/partner/<partner name>/account/<account id>/verify" \
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <account token>" \
+  -H "Content-type: application/json" \
+  -d '{
+  "firstname": "name1",
+  "middlename": "t",
+  "lastname": "name2",
+  "street1": "street1",
+  "street2": "street2",
+  "city": "city",
+  "state": "state",
+  "zipcode": "zip",
+  "country": "US",
+  "birth_day": 1,
+  "birth_month": 1,
+  "birth_year": 1990,
+  "ssn": 123456789,
+  "identity": {
+    "type": "driver_license",
+    "number": "b1234567",
+    "state": "CA",
+    "country": "US"
+  },
+  "phone_number": "+12345678900"
+}'
+
 ```
 
-> The result of the calls is an array of bids and asks:
+> The result of the calls is the updated account info:
 
 ```json
 {
-  "bids":[
-    [383.26,0.53,"bitstamp"],
-    [383.2,1.02069829,"bitstamp"],
-    [383.18,0.03914609,"bitstamp"],
-    [381.01,1.97630598,"bitfinex"],
-    [380.93,0.705,"bitfinex"]
-  ],
-  "asks":[
-    [381.06,0.01,"bitfinex"],
-    [381.1,5,"bitfinex"],
-    [383.74,1.307,"bitstamp"]
-  ]
+	"account": {
+		"id": "<account id>",
+		"verification_status": {
+			"level": "needs_documents",
+			"required_docs": ["address", "ssn"]
+		},
+		"can_buy": true,
+		"can_sell": true,
+		"limits": {
+			"usd": {
+				"available": {
+					"buy": 5000,
+					"sell": 5000
+				},
+				"total": {
+					"buy": 10000,
+					"sell": 10000
+				}
+			}
+		}
+	}
 }
 ```
 
-This will return the blended orderbook of all the available exchanges.
+This api allows you to submit personal information on the user for KYC purposes.  Users are not allowed to buy/sell currencies without having to submit this information and getting their account to a verified status.
+
+After you submit the information, the api will return a verification status with possible next steps for the user.
+
+If the api returns a list of [required documents](#required-docs) then the user has to submit these documents for further consideration.
+
+## Upload Required Documents
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/upload/sign" \
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <account token>" \
+  -H "Content-type: application/json" \
+  -d `{
+    "type": "address",
+    "filename": "utility-bill-201606.jpg",
+    "mime_type": "image/jpg"
+  }`
+```
+
+> The result of the call is the signed_request to upload the file to:
+
+```json
+{
+  "signed_url": "https://sfox-kyc.s3.amazonaws.com/31-individual-address-utility-bill-201606-ada7189dc4c7.JPG?AWSAccessKeyId=AKIAI4JAQOPLZJH3WRMA&Content-Type=image%2Fjpeg&Expires=1468909986&Signature=aqU5abWqt0fmE5GTjQUGh82%2BpzU%3D&x-amz-acl=private""
+}
+```
+
+User documents are uploaded directly to S3 from the client browser.  The process is as follows:  
+
+1. client requests a signed url from SFOX
+2. client uploads file to the url returned by #1
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v1/markets/orderbook`
+`POST https://api.sfox.com/v1/upload/sign`
 
-### Query Parameters
+# Payment Methods
 
-Parameter | Default | Description
---------- | ------- | -----------
-NONE
-
-# User
-
-## Get Account Balance
+## Add Payment Method
 
 ```shell
-curl "https://api.sfox.com/v1/user/balance"
-  -u "<api_key>:"
+curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<currency>" \
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <account token>:" \
+  -H "Content-type: application/json" \
+  -d '{
+	"type": "ach",
+	"ach": {
+		"routing_number": "0123456789",
+		"account_number": "0001112345667",
+		"name1": "john doe",
+		"name2": "jane doe",
+		"nickname": "checking 1"
+	}
+}'
+```
+
+> The above api will return the payment id and status:
+
+```json
+{
+  "payment_id": "payment123",
+  "status": "pending"
+}
+```
+
+This api is used to add a payment method to the account.  Currently, this api only supports "ach" as a payment type.  
+
+### Payment Status
+
+Statys | Description
+---------  | -----------
+pending|payment method requires verification. use the [payment verification](#verify-payment-method) api to finish adding the payment method
+active|payment method is ready to be used
+
+### HTTP Request
+
+`POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<currency>`
+
+## Verify Payment Method
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<payment method id>/verify" \
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json" \
+  -d '{
+	"amount1": 0.12,
+	"amount2": 0.34
+}'
+```
+
+> This api will return the payment method status:
+
+```json
+{
+  "payment_id": "payment123",
+  "status": "active"
+}
+```
+
+Use this api for payment methods that are in the "pending" state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated
+
+### HTTP Request
+
+`POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<payment method id>/verify`
+
+## Get Payment Methods
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json"
 ```
 
 > The above command returns JSON structured like this:
 
 ```json
 [
-  {
-    "currency":"btc",
-    "balance":0.627,
-    "available":0
-  },
-  {
-    "currency":"usd",
-    "balance":0.25161318,
-    "available":0.23161321
-  }
+	{
+		"type": "ach",
+		"status": "active",
+		"routing_number": "**89",
+		"account_number": "**67",
+		"nickname": "checking 1",
+    "currency": "usd"
+	}
 ]
 ```
 
-Use this endpoint to access your account balance.  It returns an array of objects, each of which has details for a single currency.  
-
-You will get Balance and Available balance.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is amount that is reserved either in an open trade or pending a withdrawal request.
+Returns a list of payment methods on the account
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v1/balance`
+`POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod`
 
-### Query Parameters
+# Quotes
 
-Parameter | Default | Description
---------- | ------- | -----------
-NONE
-
-## Request an ACH deposit
+## Request a Quote
 
 ```shell
-curl "https://api.sfox.com/v1/user/withdraw"
-  -H "Authorization: <api_key>"
-  -d "amount=1"
+curl "https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency>/<quote currency>/<amount>/<amount currency>"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json"
 ```
 
-> The above command returns JSON structured like this:
+> The quote returned will have the following format
 
 ```json
 {
-  "success": true
+	"quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+	"quote_amount": "3000",
+	"quote_currency": "usd",
+	"base_amount": "5",
+	"base_currency": "btc",
+	"ttl": 3000,
+	"fee": "75",
+	"fee_currency": "usd"
 }
 ```
 
-You can transfer funds from your bank account to SFOX using ACH.  You have to setup your bank account by going to [Accounts / Deposits](https://api.sfox.com/#/account/deposit).  Once you have setup your bank account, you can use this call to initiate the transfer request.
-
-<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
+This api allows you to request a quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
+a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v1/user/deposit`
+`GET https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency>/<quote currency>/<amount>/<amount currency>`
 
-### Form Parameters
+### Request Parameters
 
 Parameter | Description
 --------- | -----------
-amount | The amount you wish to deposit from your bank account
+action | "buy" or "sell"
+base currency | the base currency of the requested pair.  In the case of "btcusd", "btc" is the base currency
+quote currency | the quote currency of the requested pair.  In the case of "btcusd", "usd" is the quote currency
+amount | the amount requested
+amount currency | the currency of the amount requested
 
+### Examples
 
-## Withdraw Funds
+#### A quote to buy $20 worth of bitcoins
+
+`GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
+
+#### A quote to buy 2 bitcoins
+
+`GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
+
+#### A quote to sell 2.12345678 bitcoins
+
+`GET https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
+
+## Buy/Sell Bitcoin
 
 ```shell
-curl "https://api.sfox.com/v1/user/withdraw"
-  -H "Authorization: <api_key>"
-  -d "amount=1"
-  -d "address="
-  -d "currency=usd"
+curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json" \
+  -d '{
+    "quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+    "destination": {
+      "type": "address",
+      "address": "1EyTupDgqm5ETjwTn29QPWCkmTCoEv1WbT"
+    },
+    "payment_method_id": "payment123"
+  }'
 ```
 
-> The above command returns JSON structured like this:
+> The result will be
 
 ```json
 {
-  "success": true
+  "transaction_id": "transaction123",
+  "status": "pending"
 }
 ```
 
-Submits a coin or currency withdrawal request to SFOX.  Your funds must be available before requesting withdrawal.  For fiat currency withdrawal, your bank account must be setup prior to making the withdrawal request.  You can setup your bank account by going to [Accounts / Deposits](https://api.sfox.com/#/account/deposit).
+This api call executes on a buy or sell [quote](#request-a-quote) that was previously obtained.  The status indicates whether the transactions
+executed successfully, or if it is pending funding of the account.  
 
-<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
+### Flow for Pending transactions
 
-### HTTP Request
-
-`POST https://api.sfox.com/v1/user/withdraw`
-
-### Form Parameters
-
-Parameter | Description
---------- | -----------
-amount | The amount you wish to withdraw
-currency | Currency is one of: usd or btc
-address | if currency == btc this field has to be a valid mainnet bitcoin address. Otherwise leave it out or empty
-
-
-# Orders
-
-## Buy Now
-
-```shell
-curl "https://api.sfox.com/v1/orders/buy"
-  -u "<api_key>:"
-  -d "quantity=1"
-```
-
-> The above command returns the same JSON object as the Order Status API, and it is structured like this:
-
-```json
-{
-  "id": 666,
-  "quantity": 1,
-  "price": 10,
-  "o_action": "Buy",
-  "pair": "btcusd",
-  "type": "Limit",
-  "vwap": 0,
-  "filled": 0,
-  "status": "Started"
-}
-```
-
-This is a market order request to buy certain quantity of bitcoin.  Since this is a "Buy Now" order, it will execute immediately.
+If the status is "pending" then it is very likely that the account will be funded after the quote has expired.  In that case, you can use the [get a quote](#request-a-quote)
+api call to refresh the quote associated with this transaction.  Once the account is funded, and the quote is updated, then you can call the [update transactions]()
+api to execute on the new quote.
 
 ### HTTP Request
 
@@ -258,253 +375,47 @@ This is a market order request to buy certain quantity of bitcoin.  Since this i
 
 Parameter | Description
 --------- | -----------
-quantity | the amount of bitcoin you wish to buy
+quote_id | the quote to use for this transaction
+destination.type | the type of destination to receive the funds. One of: payment_method, or bitcoin
+destination.address | the bitcoin address to send the bitcoins to (if a buy transaction) 
+destination.payment_method_id | the payment method id to receive the funds from a bitcoin sale
+payment_method_id | the funding source for the transaction (if this is a buy transaction)
 
-
-## Buy Bitcoin
+## Update Transaction
 
 ```shell
-curl "https://api.sfox.com/v1/orders/buy"
-  -u "<api_key>:"
-  -d "quantity=1"
-  -d "price=10"
+curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json" \
+  -X PATCH \
+  -d '{
+    "quote_id": "b3d7ce70-4d91-11e6-bfc6-14109fd9ceb9",
+  }'
 ```
 
-> The above command returns the same JSON object as the Order Status API, and it is structured like this:
+> The quote returned will have the following format
 
 ```json
 {
-  "id": 666,
-  "quantity": 1,
-  "price": 10,
-  "o_action": "Buy",
-  "pair": "btcusd",
-  "type": "Limit",
-  "vwap": 0,
-  "filled": 0,
-  "status": "Started"
+	"transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
+	"status": "completed"
 }
 ```
 
-This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the "error" field.
+This api allows you to request an updated quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
+a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v1/orders/buy`
-
-### Query Parameters
-
-Parameter | Description
---------- | -----------
-quantity | the amount of bitcoin you wish to buy
-price | the max price you are willing to pay.  The executed price will always be less than or equal to this price if the market conditions allow it, otherwise the order will not execute.
-algorithm_id | the [algorithm id](#algorithm-ids) you wish to use to execute the order (default: 200) 
-client_order_id | this is an optional field that will hold a user specified id for reference
-currency_pair | the currency pair you wish to trade (default: btcusd)
+`GET https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency>/<quote currency>/<amount>/<amount currency>`
 
 
-## Sell Now
-
-```shell
-curl "https://api.sfox.com/v1/orders/sell"
-  -u "<api_key>:"
-  -d "quantity=1"
-```
-
-> The above command returns the same JSON object as the Order Status API, and it is structured like this:
-
-```json
-{
-  "id": 667,
-  "quantity": 1,
-  "price": 10,
-  "o_action": "Sell",
-  "pair": "btcusd",
-  "type": "Limit",
-  "vwap": 0,
-  "filled": 0,
-  "status": "Started"
-}
-```
-This is a market order request to sell certain quantity of bitcoin.  Since this is a "Sell Now" order, it will execute immediately.
-
-
-### HTTP Request
-
-`POST https://api.sfox.com/v1/orders/sell`
-
-### Query Parameters
-
-Parameter | Description
---------- | -----------
-quantity | the amount of bitcoin you wish to buy
-
-## Sell Bitcoin
-
-```shell
-curl "https://api.sfox.com/v1/orders/sell"
-  -u "<api_key>:"
-  -d "quantity=1"
-  -d "price=10"
-```
-
-> The above command returns the same JSON object as the Order Status API, and it is structured like this:
-
-```json
-{
-  "id": 667,
-  "quantity": 1,
-  "price": 10,
-  "o_action": "Sell",
-  "pair": "btcusd",
-  "type": "Limit",
-  "vwap": 0,
-  "filled": 0,
-  "status": "Started"
-}
-```
-
-This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the "error" field.
-
-### HTTP Request
-
-`POST https://api.sfox.com/v1/orders/sell`
-
-### Query Parameters
-
-Parameter | Description
---------- | -----------
-quantity | the amount of bitcoin you wish to buy
-price | the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.
-algorithm_id | the [algorithm id](#algorithm-ids) you wish to use to execute the order (default: 200) 
-client_order_id | this is an optional field that will hold a user specified id for reference
-currency_pair | the currency pair you wish to trade (default: btcusd)
-
-
-
-
-## Get Order Status
-
-```shell
-curl "https://api.sfox.com/v1/order/<order_id>"
-  -u "<api_key>:"
-```
-
-> The above command returns a JSON structured like this:
-
-```json
-{
-  "id": 666,
-  "quantity": 1,
-  "price": 10,
-  "o_action": "Buy",
-  "pair": "btcusd",
-  "type": "Limit",
-  "vwap": 0,
-  "filled": 0,
-  "status": "Started"
-}
-```
-
-This endpoint returns the status of the order specified by the <order_id> url parameter
-
-### HTTP Request
-
-`GET https://api.sfox.com/v1/order/<order_id>`
-
-### Possible "status" values
+## Required Docs
 
 Value | Description
 --------- | -----------
-Started | The order is open on the marketplace waiting for fills
-Cancel pending | The order is in the process of being cancelled
-Canceled | The order was successfully canceled
-Filled | The order was filled
-Done | The order was completed successfully
-
-
-
-
-## Get Active Orders
-
-```shell
-curl "https://api.sfox.com/v1/orders"
-  -u "<api_key>:"
-```
-
-> The above command returns an array of Order Status JSON objects structured like this:
-
-```json
-[
-  {
-    "id": 666,
-    "quantity": 1,
-    "price": 10,
-    "o_action": "Buy",
-    "pair": "btcusd",
-    "type": "Limit",
-    "vwap": 0,
-    "filled": 0,
-    "status": "Started"
-  },
-  {
-    "id": 667,
-    "quantity": 1,
-    "price": 10,
-    "o_action": "Sell",
-    "pair": "btcusd",
-    "type": "Limit",
-    "vwap": 0,
-    "filled": 0,
-    "status": "Started"
-  }
-]
-```
-
-This endpoint returns an array of statuses for all active orders.
-
-### HTTP Request
-
-`GET https://api.sfox.com/v1/orders`
-
-### Possible "status" values
-
-Value | Description
---------- | -----------
-Started | The order is open on the marketplace waiting for fills
-Cancel pending | The order is in the process of being cancelled
-Canceled | The order was successfully canceled
-Filled | The order was filled
-Done | The order was completed successfully
-
-
-
-
-## Cancel Order
-
-```shell
-curl "https://api.sfox.com/v1/order/<order_id>"
-  -u "<api_key>:"
-  -X DELETE
-```
-
-> The above command does not return anything.  To check on the cancellation status of the order you will need to poll the get order status api.
-
-This endpoint will start cancelling the order specified.
-
-### HTTP Request
-
-`DELETE https://api.sfox.com/v1/order/<order_id>`
-
-## Algorithm IDs
-ID | Description
---------- | -----------
-200 | Smart Routing
-301 | Goliath
-302 | Tortoise
-303 | Hare
-304 | Stop-Loss
-305 | Polar Bear
-306 | Sniper
-307 | TWAP
+ssn|a document showing proof of the social security number
+dl|a scan of the person's driver's license
+address|a scan of recent utility bill or bank account statement showing the person's address
 
