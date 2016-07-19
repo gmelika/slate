@@ -5,7 +5,7 @@
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="icon" href="images/favicon.ico">
-    <title>API Reference</title>
+    <title>Partner API Reference</title>
 
     <style>
       .highlight table td { padding: 5px; }
@@ -111,7 +111,7 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='/account/api'>Sign Up for a Developer Key</a></li>
+            <li><a href='www.sfox.com/partners'>Sign Up for a Partner Account</a></li>
             <li><a href='mailto:support@sfox.com'>Need help? Email us</a></li>
         </ul>
     </div>
@@ -120,633 +120,456 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>Welcome to the SFOX API! The API allows you to connect your application to SFOX, execute trades, and deposit and withdraw currencies.</p>
-
-<h1 id="authentication">Authentication</h1>
+<p>Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.</p>
 
 <blockquote>
-<p>To authorize, use this code:</p>
+<p>To create an account, use this code:</p>
 </blockquote>
 <pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"api_endpoint_here"</span>
-  -u <span class="s2">"&lt;api token&gt;:"</span>
+curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/&lt;path&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span>
 </code></pre>
 
-<blockquote>
-<p>Make sure to replace <api_key> with your API key, and don&rsquo;t forget the colon.</p>
-</blockquote>
-
-<p>SFOX uses API keys to grant access. You can create a new SFOX API key at our <a href="http://sfox.com/#/account/api">developer portal</a>.</p>
-
-<p>The API key should be included in all API requests to the server in a header that looks like the following:</p>
-
-<p><code class="prettyprint">Authorization: Bearer &lt;api_key&gt;</code></p>
+<p>SFOX uses partner IDs only for tracking purposes.</p>
 
 <aside class="notice">
-You must replace `api_key` with your personal API key.
+You must replace &ldquo;partner id&rdquo; with your partner id provided by sfox.
 </aside>
 
-<h1 id="price-data">Price Data</h1>
+<h1 id="creating-a-customer-account">Creating a Customer Account</h1>
 
-<h2 id="get-best-price">Get Best Price</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/offer/buy?amount=1"</span>
+<p>This api allows you to create an account on SFOX for the customer.  This api will return an API token associated with this account which will allow you to submit requests on behalf of the customer.</p>
+
+<blockquote>
+<p>To create an account, use this code:</p>
+</blockquote>
+<pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
+curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="s2">"username=user@domain.com"</span> <span class="se">\</span>
+  -d <span class="s2">"password=password123"</span>
 </code></pre>
 
 <blockquote>
-<p>The result of the calls is something like this:</p>
+<p>The result of the call will be something like this:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="mf">383.00</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="mf">383.21</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"fees"</span><span class="p">:</span><span class="mf">0.95</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"total"</span><span class="p">:</span><span class="mf">382.26</span><span class="w">
+  </span><span class="nt">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;account token&gt;"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"account"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user123"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"verification_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"level"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unverified"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+    </span><span class="s2">"can_buy"</span><span class="err">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"usd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This will return the price you need to specify for a limir order to execute fully. Please note that price fluctuates very quickly and this price is based on the data available at that moment.  If you want to trade now, we recommend using Buy Now and Sell Now calls and not limit orders.</p>
+<h1 id="kyc">KYC</h1>
 
-<p>To get the sell price simply change &ldquo;buy&rdquo; to &ldquo;sell&rdquo; in the url.</p>
+<h2 id="verify-account">Verify Account</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account/&lt;account id&gt;/verify"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="s1">'{
+  "firstname": "name1",
+  "middlename": "t",
+  "lastname": "name2",
+  "street1": "street1",
+  "street2": "street2",
+  "city": "city",
+  "state": "state",
+  "zipcode": "zip",
+  "country": "US",
+  "birth_day": 1,
+  "birth_month": 1,
+  "birth_year": 1990,
+  "ssn": 123456789,
+  "identity": {
+    "type": "driver_license",
+    "number": "b1234567",
+    "state": "CA",
+    "country": "US"
+  },
+  "phone_number": "+12345678900"
+}'</span>
 
-<p>Use the &ldquo;price&rdquo; returned to you as the price in limit order you&rsquo;re placing.</p>
+</code></pre>
 
-<p>We also return VWAP - Volume weighted average price.  &ldquo;vwap&rdquo; is the expected price you will pay for the entire order.  Even though the price is 383.21 in this example, you will most likely pay $383 for the entire order.  These prices are not guaranteed as the market is always moving.  </p>
+<blockquote>
+<p>The result of the calls is the updated account info:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"account"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;account id&gt;"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"verification_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"level"</span><span class="p">:</span><span class="w"> </span><span class="s2">"needs_documents"</span><span class="p">,</span><span class="w">
+            </span><span class="nt">"required_docs"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">"address"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ssn"</span><span class="p">]</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"can_buy"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="nt">"usd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+                </span><span class="p">},</span><span class="w">
+                </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                    </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w">
+                    </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This api allows you to submit personal information on the user for KYC purposes.  Users are not allowed to buy/sell currencies without having to submit this information and getting their account to a verified status.</p>
+
+<p>After you submit the information, the api will return a verification status with possible next steps for the user.</p>
+
+<p>If the api returns a list of <a href="#required-docs">required documents</a> then the user has to submit these documents for further consideration.</p>
+
+<h2 id="upload-required-documents">Upload Required Documents</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/upload/sign"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="sb">`</span><span class="o">{</span>
+    <span class="s2">"type"</span>: <span class="s2">"address"</span>,
+    <span class="s2">"filename"</span>: <span class="s2">"utility-bill-201606.jpg"</span>,
+    <span class="s2">"mime_type"</span>: <span class="s2">"image/jpg"</span>
+  <span class="o">}</span><span class="sb">`</span>
+</code></pre>
+
+<blockquote>
+<p>The result of the call is the signed_request to upload the file to:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"signed_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://sfox-kyc.s3.amazonaws.com/31-individual-address-utility-bill-201606-ada7189dc4c7.JPG?AWSAccessKeyId=AKIAI4JAQOPLZJH3WRMA&amp;Content-Type=image%2Fjpeg&amp;Expires=1468909986&amp;Signature=aqU5abWqt0fmE5GTjQUGh82%2BpzU%3D&amp;x-amz-acl=private"</span><span class="err">"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>User documents are uploaded directly to S3 from the client browser.  The process is as follows:  </p>
+
+<ol>
+<li>client requests a signed url from SFOX</li>
+<li>client uploads file to the url returned by #1</li>
+</ol>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v1/offer/buy?quantity</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v1/upload/sign</code></p>
 
-<h3 id="query-parameters">Query Parameters</h3>
+<h1 id="payment-methods">Payment Methods</h1>
+
+<h2 id="add-payment-method">Add Payment Method</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod/&lt;currency&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;:"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="s1">'{
+    "type": "ach",
+    "ach": {
+        "routing_number": "0123456789",
+        "account_number": "0001112345667",
+        "name1": "john doe",
+        "name2": "jane doe",
+        "nickname": "checking 1"
+    }
+}'</span>
+</code></pre>
+
+<blockquote>
+<p>The above api will return the payment id and status:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"payment_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pending"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This api is used to add a payment method to the account.  Currently, this api only supports &ldquo;ach&rdquo; as a payment type.  </p>
+
+<h3 id="payment-status">Payment Status</h3>
 
 <table><thead>
 <tr>
-<th>Parameter</th>
-<th>Default</th>
+<th>Statys</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>quantity</td>
-<td></td>
-<td>The number of bitcoin you will be trading</td>
+<td>pending</td>
+<td>payment method requires verification. use the <a href="#verify-payment-method">payment verification</a> api to finish adding the payment method</td>
+</tr>
+<tr>
+<td>active</td>
+<td>payment method is ready to be used</td>
 </tr>
 </tbody></table>
-
-<h2 id="get-orderbook">Get Orderbook</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/markets/orderbook"</span>
-</code></pre>
-
-<blockquote>
-<p>The result of the calls is an array of bids and asks:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"bids"</span><span class="p">:[</span><span class="w">
-    </span><span class="p">[</span><span class="mf">383.26</span><span class="p">,</span><span class="mf">0.53</span><span class="p">,</span><span class="s2">"bitstamp"</span><span class="p">],</span><span class="w">
-    </span><span class="p">[</span><span class="mf">383.2</span><span class="p">,</span><span class="mf">1.02069829</span><span class="p">,</span><span class="s2">"bitstamp"</span><span class="p">],</span><span class="w">
-    </span><span class="p">[</span><span class="mf">383.18</span><span class="p">,</span><span class="mf">0.03914609</span><span class="p">,</span><span class="s2">"bitstamp"</span><span class="p">],</span><span class="w">
-    </span><span class="p">[</span><span class="mf">381.01</span><span class="p">,</span><span class="mf">1.97630598</span><span class="p">,</span><span class="s2">"bitfinex"</span><span class="p">],</span><span class="w">
-    </span><span class="p">[</span><span class="mf">380.93</span><span class="p">,</span><span class="mf">0.705</span><span class="p">,</span><span class="s2">"bitfinex"</span><span class="p">]</span><span class="w">
-  </span><span class="p">],</span><span class="w">
-  </span><span class="nt">"asks"</span><span class="p">:[</span><span class="w">
-    </span><span class="p">[</span><span class="mf">381.06</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="s2">"bitfinex"</span><span class="p">],</span><span class="w">
-    </span><span class="p">[</span><span class="mf">381.1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s2">"bitfinex"</span><span class="p">],</span><span class="w">
-    </span><span class="p">[</span><span class="mf">383.74</span><span class="p">,</span><span class="mf">1.307</span><span class="p">,</span><span class="s2">"bitstamp"</span><span class="p">]</span><span class="w">
-  </span><span class="p">]</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This will return the blended orderbook of all the available exchanges.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v1/markets/orderbook</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod/&lt;currency&gt;</code></p>
 
-<h3 id="query-parameters">Query Parameters</h3>
+<h2 id="verify-payment-method">Verify Payment Method</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod/&lt;payment method id&gt;/verify"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="s1">'{
+    "amount1": 0.12,
+    "amount2": 0.34
+}'</span>
+</code></pre>
 
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-</tbody></table>
+<blockquote>
+<p>This api will return the payment method status:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"payment_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
 
-<p>NONE</p>
+<p>Use this api for payment methods that are in the &ldquo;pending&rdquo; state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated</p>
 
-<h1 id="user">User</h1>
+<h3 id="http-request">HTTP Request</h3>
 
-<h2 id="get-account-balance">Get Account Balance</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/user/balance"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod/&lt;payment method id&gt;/verify</code></p>
+
+<h2 id="get-payment-methods">Get Payment Methods</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod"</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span>
 </code></pre>
 
 <blockquote>
 <p>The above command returns JSON structured like this:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"currency"</span><span class="p">:</span><span class="s2">"btc"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"balance"</span><span class="p">:</span><span class="mf">0.627</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"available"</span><span class="p">:</span><span class="mi">0</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"currency"</span><span class="p">:</span><span class="s2">"usd"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"balance"</span><span class="p">:</span><span class="mf">0.25161318</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"available"</span><span class="p">:</span><span class="mf">0.23161321</span><span class="w">
-  </span><span class="p">}</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ach"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"routing_number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"**89"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"account_number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"**67"</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"nickname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checking 1"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
 
-<p>Use this endpoint to access your account balance.  It returns an array of objects, each of which has details for a single currency.  </p>
-
-<p>You will get Balance and Available balance.  Balance is your total balance for this currency.  Available, on the other hand, is what is available to you to trade and/or withdraw.  The difference is amount that is reserved either in an open trade or pending a withdrawal request.</p>
+<p>Returns a list of payment methods on the account</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v1/balance</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod</code></p>
+
+<h1 id="quotes">Quotes</h1>
+
+<h2 id="request-a-quote">Request a Quote</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/quote/&lt;action&gt;/&lt;base currency&gt;/&lt;quote currency&gt;/&lt;amount&gt;/&lt;amount currency&gt;"</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span>
+</code></pre>
+
+<blockquote>
+<p>The quote returned will have the following format</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"quote_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a5098dd0-4cb2-4256-9cb5e871fbe672d1"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"quote_amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3000"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"quote_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"base_amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btc"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"ttl"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"fee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"75"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"fee_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This api allows you to request a quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
+a quote in both the base and quote currencies.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/&lt;partner id&gt;/quote/&lt;action&gt;/&lt;base currency&gt;/&lt;quote currency&gt;/&lt;amount&gt;/&lt;amount currency&gt;</code></p>
+
+<h3 id="request-parameters">Request Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>action</td>
+<td>&ldquo;buy&rdquo; or &ldquo;sell&rdquo;</td>
+</tr>
+<tr>
+<td>base currency</td>
+<td>the base currency of the requested pair.  In the case of &ldquo;btcusd&rdquo;, &ldquo;btc&rdquo; is the base currency</td>
+</tr>
+<tr>
+<td>quote currency</td>
+<td>the quote currency of the requested pair.  In the case of &ldquo;btcusd&rdquo;, &ldquo;usd&rdquo; is the quote currency</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>the amount requested</td>
+</tr>
+<tr>
+<td>amount currency</td>
+<td>the currency of the amount requested</td>
+</tr>
+</tbody></table>
+
+<h3 id="examples">Examples</h3>
+
+<h4 id="a-quote-to-buy-20-worth-of-bitcoins">A quote to buy $20 worth of bitcoins</h4>
+
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd</code></p>
+
+<h4 id="a-quote-to-buy-2-bitcoins">A quote to buy 2 bitcoins</h4>
+
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc</code></p>
+
+<h4 id="a-quote-to-sell-2-12345678-bitcoins">A quote to sell 2.12345678 bitcoins</h4>
+
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc</code></p>
+
+<h2 id="buy-sell-bitcoin">Buy/Sell Bitcoin</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction"</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="s1">'{
+    "quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+    "destination": {
+      "type": "address",
+      "address": "1EyTupDgqm5ETjwTn29QPWCkmTCoEv1WbT"
+    },
+    "payment_method_id": "payment123"
+  }'</span>
+</code></pre>
+
+<blockquote>
+<p>The result will be</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"transaction_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"transaction123"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pending"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This api call executes on a buy or sell <a href="#request-a-quote">quote</a> that was previously obtained.  The status indicates whether the transactions
+executed successfully, or if it is pending funding of the account.  </p>
+
+<h3 id="flow-for-pending-transactions">Flow for Pending transactions</h3>
+
+<p>If the status is &ldquo;pending&rdquo; then it is very likely that the account will be funded after the quote has expired.  In that case, you can use the <a href="#request-a-quote">get a quote</a>
+api call to refresh the quote associated with this transaction.  Once the account is funded, and the quote is updated, then you can call the <a href="#">update transactions</a>
+api to execute on the new quote.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/buy</code></p>
 
 <h3 id="query-parameters">Query Parameters</h3>
 
 <table><thead>
 <tr>
 <th>Parameter</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-</tbody></table>
-
-<p>NONE</p>
-
-<h2 id="request-an-ach-deposit">Request an ACH deposit</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/user/withdraw"</span>
-  -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
-  -d <span class="s2">"amount=1"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>You can transfer funds from your bank account to SFOX using ACH.  You have to setup your bank account by going to <a href="https://api.sfox.com/#/account/deposit">Accounts / Deposits</a>.  Once you have setup your bank account, you can use this call to initiate the transfer request.</p>
-
-<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://api.sfox.com/v1/user/deposit</code></p>
-
-<h3 id="form-parameters">Form Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>amount</td>
-<td>The amount you wish to deposit from your bank account</td>
+<td>quote_id</td>
+<td>the quote to use for this transaction</td>
+</tr>
+<tr>
+<td>destination.type</td>
+<td>the type of destination to receive the funds. One of: payment_method, or bitcoin</td>
+</tr>
+<tr>
+<td>destination.address</td>
+<td>the bitcoin address to send the bitcoins to (if a buy transaction)</td>
+</tr>
+<tr>
+<td>destination.payment_method_id</td>
+<td>the payment method id to receive the funds from a bitcoin sale</td>
+</tr>
+<tr>
+<td>payment_method_id</td>
+<td>the funding source for the transaction (if this is a buy transaction)</td>
 </tr>
 </tbody></table>
 
-<h2 id="withdraw-funds">Withdraw Funds</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/user/withdraw"</span>
-  -H <span class="s2">"Authorization: &lt;api_key&gt;"</span>
-  -d <span class="s2">"amount=1"</span>
-  -d <span class="s2">"address="</span>
-  -d <span class="s2">"currency=usd"</span>
+<h2 id="update-transaction">Update Transaction</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;"</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -X PATCH <span class="se">\</span>
+  -d <span class="s1">'{
+    "quote_id": "b3d7ce70-4d91-11e6-bfc6-14109fd9ceb9",
+  }'</span>
 </code></pre>
 
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>The quote returned will have the following format</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"success"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+    </span><span class="nt">"transaction_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"d0acf552-4d91-11e6-82df-14109fd9ceb9"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"completed"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>Submits a coin or currency withdrawal request to SFOX.  Your funds must be available before requesting withdrawal.  For fiat currency withdrawal, your bank account must be setup prior to making the withdrawal request.  You can setup your bank account by going to <a href="https://api.sfox.com/#/account/deposit">Accounts / Deposits</a>.</p>
-
-<aside class="notice">If the request fails, the json result will include an error field with the reason.</aside>
+<p>This api allows you to request an updated quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
+a quote in both the base and quote currencies.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://api.sfox.com/v1/user/withdraw</code></p>
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/&lt;partner id&gt;/quote/&lt;action&gt;/&lt;base currency&gt;/&lt;quote currency&gt;/&lt;amount&gt;/&lt;amount currency&gt;</code></p>
 
-<h3 id="form-parameters">Form Parameters</h3>
+<h2 id="required-docs">Required Docs</h2>
 
 <table><thead>
 <tr>
-<th>Parameter</th>
+<th>Value</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
-<td>amount</td>
-<td>The amount you wish to withdraw</td>
+<td>ssn</td>
+<td>a document showing proof of the social security number</td>
 </tr>
 <tr>
-<td>currency</td>
-<td>Currency is one of: usd or btc</td>
+<td>dl</td>
+<td>a scan of the person&rsquo;s driver&rsquo;s license</td>
 </tr>
 <tr>
 <td>address</td>
-<td>if currency == btc this field has to be a valid mainnet bitcoin address. Otherwise leave it out or empty</td>
-</tr>
-</tbody></table>
-
-<h1 id="orders">Orders</h1>
-
-<h2 id="buy-now">Buy Now</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders/buy"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -d <span class="s2">"quantity=1"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns the same JSON object as the Order Status API, and it is structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">666</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This is a market order request to buy certain quantity of bitcoin.  Since this is a &ldquo;Buy Now&rdquo; order, it will execute immediately.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/buy</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>quantity</td>
-<td>the amount of bitcoin you wish to buy</td>
-</tr>
-</tbody></table>
-
-<h2 id="buy-bitcoin">Buy Bitcoin</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders/buy"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -d <span class="s2">"quantity=1"</span>
-  -d <span class="s2">"price=10"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns the same JSON object as the Order Status API, and it is structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">666</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This endpoint initiates a buy order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the &ldquo;error&rdquo; field.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/buy</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>quantity</td>
-<td>the amount of bitcoin you wish to buy</td>
-</tr>
-<tr>
-<td>price</td>
-<td>the max price you are willing to pay.  The executed price will always be less than or equal to this price if the market conditions allow it, otherwise the order will not execute.</td>
-</tr>
-<tr>
-<td>algorithm_id</td>
-<td>the <a href="#algorithm-ids">algorithm id</a> you wish to use to execute the order (default: 200)</td>
-</tr>
-<tr>
-<td>client_order_id</td>
-<td>this is an optional field that will hold a user specified id for reference</td>
-</tr>
-<tr>
-<td>currency_pair</td>
-<td>the currency pair you wish to trade (default: btcusd)</td>
-</tr>
-</tbody></table>
-
-<h2 id="sell-now">Sell Now</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders/sell"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -d <span class="s2">"quantity=1"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns the same JSON object as the Order Status API, and it is structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">667</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sell"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This is a market order request to sell certain quantity of bitcoin.  Since this is a &ldquo;Sell Now&rdquo; order, it will execute immediately.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/sell</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>quantity</td>
-<td>the amount of bitcoin you wish to buy</td>
-</tr>
-</tbody></table>
-
-<h2 id="sell-bitcoin">Sell Bitcoin</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders/sell"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -d <span class="s2">"quantity=1"</span>
-  -d <span class="s2">"price=10"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns the same JSON object as the Order Status API, and it is structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">667</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sell"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This endpoint initiates a sell order for bitcoin for the specified amount with the specified limit price.  If the price field is omitted, then the order will be treated as a market order and will execute immediately.  If there is an issue with the request you will get the reason in the &ldquo;error&rdquo; field.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">POST https://api.sfox.com/v1/orders/sell</code></p>
-
-<h3 id="query-parameters">Query Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>quantity</td>
-<td>the amount of bitcoin you wish to buy</td>
-</tr>
-<tr>
-<td>price</td>
-<td>the min price you are willing to accept.  The executed price will always be higher than or equal to this price if the market conditions allow it, otherwise the order will not execute.</td>
-</tr>
-<tr>
-<td>algorithm_id</td>
-<td>the <a href="#algorithm-ids">algorithm id</a> you wish to use to execute the order (default: 200)</td>
-</tr>
-<tr>
-<td>client_order_id</td>
-<td>this is an optional field that will hold a user specified id for reference</td>
-</tr>
-<tr>
-<td>currency_pair</td>
-<td>the currency pair you wish to trade (default: btcusd)</td>
-</tr>
-</tbody></table>
-
-<h2 id="get-order-status">Get Order Status</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/order/&lt;order_id&gt;"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns a JSON structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">666</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>This endpoint returns the status of the order specified by the <order_id> url parameter</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://api.sfox.com/v1/order/&lt;order_id&gt;</code></p>
-
-<h3 id="possible-quot-status-quot-values">Possible &ldquo;status&rdquo; values</h3>
-
-<table><thead>
-<tr>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Started</td>
-<td>The order is open on the marketplace waiting for fills</td>
-</tr>
-<tr>
-<td>Cancel pending</td>
-<td>The order is in the process of being cancelled</td>
-</tr>
-<tr>
-<td>Canceled</td>
-<td>The order was successfully canceled</td>
-</tr>
-<tr>
-<td>Filled</td>
-<td>The order was filled</td>
-</tr>
-<tr>
-<td>Done</td>
-<td>The order was completed successfully</td>
-</tr>
-</tbody></table>
-
-<h2 id="get-active-orders">Get Active Orders</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/orders"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-</code></pre>
-
-<blockquote>
-<p>The above command returns an array of Order Status JSON objects structured like this:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">[</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">666</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Buy"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-  </span><span class="p">},</span><span class="w">
-  </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="mi">667</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"quantity"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"price"</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"o_action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Sell"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"pair"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btcusd"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Limit"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"vwap"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"filled"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Started"</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">]</span><span class="w">
-</span></code></pre>
-
-<p>This endpoint returns an array of statuses for all active orders.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://api.sfox.com/v1/orders</code></p>
-
-<h3 id="possible-quot-status-quot-values">Possible &ldquo;status&rdquo; values</h3>
-
-<table><thead>
-<tr>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>Started</td>
-<td>The order is open on the marketplace waiting for fills</td>
-</tr>
-<tr>
-<td>Cancel pending</td>
-<td>The order is in the process of being cancelled</td>
-</tr>
-<tr>
-<td>Canceled</td>
-<td>The order was successfully canceled</td>
-</tr>
-<tr>
-<td>Filled</td>
-<td>The order was filled</td>
-</tr>
-<tr>
-<td>Done</td>
-<td>The order was completed successfully</td>
-</tr>
-</tbody></table>
-
-<h2 id="cancel-order">Cancel Order</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v1/order/&lt;order_id&gt;"</span>
-  -u <span class="s2">"&lt;api_key&gt;:"</span>
-  -X DELETE
-</code></pre>
-
-<blockquote>
-<p>The above command does not return anything.  To check on the cancellation status of the order you will need to poll the get order status api.</p>
-</blockquote>
-
-<p>This endpoint will start cancelling the order specified.</p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">DELETE https://api.sfox.com/v1/order/&lt;order_id&gt;</code></p>
-
-<h2 id="algorithm-ids">Algorithm IDs</h2>
-
-<table><thead>
-<tr>
-<th>ID</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>200</td>
-<td>Smart Routing</td>
-</tr>
-<tr>
-<td>301</td>
-<td>Goliath</td>
-</tr>
-<tr>
-<td>302</td>
-<td>Tortoise</td>
-</tr>
-<tr>
-<td>303</td>
-<td>Hare</td>
-</tr>
-<tr>
-<td>304</td>
-<td>Stop-Loss</td>
-</tr>
-<tr>
-<td>305</td>
-<td>Polar Bear</td>
-</tr>
-<tr>
-<td>306</td>
-<td>Sniper</td>
-</tr>
-<tr>
-<td>307</td>
-<td>TWAP</td>
+<td>a scan of recent utility bill or bank account statement showing the person&rsquo;s address</td>
 </tr>
 </tbody></table>
 
