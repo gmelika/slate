@@ -16,7 +16,8 @@ search: true
 
 # Introduction
 
-Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.
+Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.  In this structure, our partners
+act as an intermediary between SFOX and their customers.
 
 > To create an account, use this code:
 
@@ -34,7 +35,39 @@ You must replace "partner id" with your partner id provided by sfox.
 
 # Creating a Customer Account
 
-This api allows you to create an account on SFOX for the customer.  This api will return an API token associated with this account which will allow you to submit requests on behalf of the customer.
+The typical process to create a customer account on SFOX is as follows:
+
+1. Partner [creates an account](#signup) for the Customer
+2. SFOX returns an `account token` which is used on any further api call to identify the target account
+3. Partner collects KYC information and [sends it to SFOX](#verify-account)
+4. If required, the [Partner uploads](#upload-required-verification-documents) any customer documents as requested by SFOX
+5. Customer [adds a payment method](#add-payment-method) to the account
+6. Once the customer and the payment method are verified then the customer is allowed to buy/sell crypto currencies through SFOX
+
+## Signup
+
+This api is the first step with any new user interaction with the system.
+It create an account on SFOX for the customer.  Once the call is successful the Partner will receive an `account token` which it can
+use for further actions on the account on behalf of the customer.  [Read more](#account-fields) about the fields returned by this api.
+
+### Request Parameters
+
+Parameter | Description
+--------- | -----------
+email | the email used by the customer
+username | this must be the same as the user's email
+password | this is used to allow the user to recover account information
+
+### Account Fields
+
+Parameter | Description
+--------- | -----------
+token | this is the account token to be used in all further communications.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.
+**verification_status** |
+<ul><li>level</li><li>required_docs</li></ul> | <ul><li>see [verification levels](#verification-levels) for further information</li><li>see [required docs](#required-docs) for more info</li></ul>
+can_buy | whether the user is permitted to buy from SFOX
+can_sell | whether the user is permitted to sell to SFOX
+limits | this describes both the user's total limits, and their available limits (after taking into account what they've used up already)
 
 > To create an account, use this code:
 
@@ -43,11 +76,14 @@ This api allows you to create an account on SFOX for the customer.  This api wil
 curl "https://api.sfox.com/v2/partner/<partner name>/account" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Content-type: application/json" \
-  -d "username=user@domain.com" \
-  -d "password=password123"
+  -d '{
+    "username":"user@domain.com",
+    "email":"user@domain.com",
+    "password":"password123"
+  }'
 ```
 
-> The result of the call will be something like this:
+> The result of the call will be in the following format:
 
 ```json
 {
@@ -56,7 +92,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
     "id": "user123",
     "verification_status": {
       "level": "unverified"
-    }
+    },
     "can_buy": false,
     "can_sell": false,
     "limits": {
@@ -74,8 +110,6 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
   }
 }
 ```
-
-# KYC
 
 ## Verify Account
 
@@ -137,13 +171,31 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/<account id>/verify
 }
 ```
 
-This api allows you to submit personal information on the user for KYC purposes.  Users are not allowed to buy/sell currencies without having to submit this information and getting their account to a verified status.
+This api allows you to submit personal information on the user for KYC purposes.  Before a user can buy/sell currencies they need to be fully
+verified.  This api allows the user to provide Personally Indetifiable Information, which we use to verify their identity.
+If the information matches without issues, their verification level will be marked `verified`.  This call returns the same [account](#account-fields)
+data structure as described before.
 
-After you submit the information, the api will return a verification status with possible next steps for the user.
+### Verification levels
 
-If the api returns a list of [required documents](#required-docs) then the user has to submit these documents for further consideration.
+Level | Description
+--------- | -----------
+verified|the user has been verified and no further action is needed
+pending|the user needs further verification by SFOX, however no further action is needed by the user
+needs_documents|SFOX needs further documentation from the user which need to be [uploaded](#upload-required-verification-documents) using our api.  The list of documents required will be returned in the [required_docs](#required-docs) property. 
 
-## Upload Required Documents
+If the api, however, returns a list of [required documents](#required-docs) then the user has to submit these documents for further consideration.
+
+## Required Docs
+
+Value | Description
+--------- | -----------
+ssn|a document showing proof of the social security number
+dl|a scan of the person's driver's license
+address|a scan of recent utility bill or bank account statement showing the person's address
+passport|the user needs to provide a scan of the pages that include the person's picture, name and personal information.
+
+## Upload Required Verification Documents
 
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/upload/sign" \
@@ -169,6 +221,7 @@ User documents are uploaded directly to S3 from the client browser.  The process
 
 1. client requests a signed url from SFOX
 2. client uploads file to the url returned by #1
+3. Please note that S3 expects the files to be uploaded as a PUT request. [read more](http://docs.aws.amazon.com/AmazonS3/latest/dev/PresignedUrlUploadObject.html)
 
 ### HTTP Request
 
@@ -179,13 +232,14 @@ User documents are uploaded directly to S3 from the client browser.  The process
 ## Add Payment Method
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<currency>" \
+curl "https://api.sfox.com/v2/account/<account id>/paymentmethod" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>:" \
   -H "Content-type: application/json" \
   -d '{
 	"type": "ach",
 	"ach": {
+    "currency": "usd",
 		"routing_number": "0123456789",
 		"account_number": "0001112345667",
 		"name1": "john doe",
@@ -215,12 +269,12 @@ active|payment method is ready to be used
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<currency>`
+`POST https://api.sfox.com/v2/account/<account id>/paymentmethod`
 
 ## Verify Payment Method
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<payment method id>/verify" \
+curl "https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method id>/verify" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -243,12 +297,12 @@ Use this api for payment methods that are in the "pending" state.  These payment
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod/<payment method id>/verify`
+`POST https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method id>/verify`
 
 ## Get Payment Methods
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod"
+curl "https://api.sfox.com/v2/account/<account id>/paymentmethod"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json"
@@ -280,10 +334,17 @@ Returns a list of payment methods on the account
 ## Request a Quote
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency>/<quote currency>/<amount>/<amount currency>"
+curl "https://quotes.sfox.com/v2/partner/<partner id>/quote/<action>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
-  -H "Content-type: application/json"
+  -H "Content-type: application/json" \
+  -d '{
+    "action": "buy",
+    "base_currency": "btc",
+    "quote_currency": "usd",
+    "amount": "50",
+    "amount_currency": "usd"
+  }'
 ```
 
 > The quote returned will have the following format
@@ -296,6 +357,7 @@ curl "https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency
 	"base_amount": "5",
 	"base_currency": "btc",
 	"ttl": 3000,
+  "expires_at": ,
 	"fee": "75",
 	"fee_currency": "usd"
 }
@@ -332,7 +394,42 @@ amount currency | the currency of the amount requested
 
 `GET https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
 
-## Buy/Sell Bitcoin
+## Get Transaction Details
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json"
+```
+
+> The result will be
+
+```json
+{
+  "transaction_id": "transaction123",
+  "amount": "100",
+  "amount_currency": "usd",
+  "status": "pending"
+}
+```
+
+Use this api to get the status of a previously initiated transaction.  
+
+### HTTP Request
+
+`GET https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+
+### Response Fields
+
+Parameter | Description
+--------- | -----------
+transaction_id | same as the provided transaction_id
+amount | the amount of the transaction
+amount_currency | the currency of the amount specified
+status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
+
+## Initiate Buy
 
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
@@ -340,11 +437,13 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
   -d '{
-    "quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+    "action": "buy",
     "destination": {
       "type": "address",
       "address": "1EyTupDgqm5ETjwTn29QPWCkmTCoEv1WbT"
     },
+    "amount": "100",
+    "amount_currency": "usd",
     "payment_method_id": "payment123"
   }'
 ```
@@ -358,30 +457,24 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
 }
 ```
 
-This api call executes on a buy or sell [quote](#request-a-quote) that was previously obtained.  The status indicates whether the transactions
-executed successfully, or if it is pending funding of the account.  
-
-### Flow for Pending transactions
-
-If the status is "pending" then it is very likely that the account will be funded after the quote has expired.  In that case, you can use the [get a quote](#request-a-quote)
-api call to refresh the quote associated with this transaction.  Once the account is funded, and the quote is updated, then you can call the [update transactions]()
-api to execute on the new quote.
+This api call will initiate the buy transaction by withdrawing `amount` from the payment source specified.  Once the funds are available,
+the partner needs to call the [confirm buy](#confirm-buy) api to complete the purchase.  
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v1/orders/buy`
+`POST https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction`
 
-### Query Parameters
+### Request Parameters
 
 Parameter | Description
 --------- | -----------
-quote_id | the quote to use for this transaction
-destination.type | the type of destination to receive the funds. One of: payment_method, or bitcoin
-destination.address | the bitcoin address to send the bitcoins to (if a buy transaction) 
-destination.payment_method_id | the payment method id to receive the funds from a bitcoin sale
+destination.type | the type of destination to receive the funds. For a buy order this is always `payment_method`
+destination.address | the bitcoin address to send the purchased bitcoins to
 payment_method_id | the funding source for the transaction (if this is a buy transaction)
+amount_currency | the name of the fiat currency the user wishes to use
+amount | the amount that'll be used for the purchase transaction 
 
-## Update Transaction
+## Confirm Buy
 
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
@@ -391,6 +484,7 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<tra
   -X PATCH \
   -d '{
     "quote_id": "b3d7ce70-4d91-11e6-bfc6-14109fd9ceb9",
+    "transaction_id": "transaction123"
   }'
 ```
 
@@ -403,19 +497,86 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<tra
 }
 ```
 
-This api allows you to request an updated quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
-a quote in both the base and quote currencies.
+Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided `quote_id`.  Both the amount
+specified in the quote and the transaction must match, otherwise the transaction will not confirm.
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency>/<quote currency>/<amount>/<amount currency>`
+`PATCH https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
 
+## Initiate Sell
 
-## Required Docs
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json" \
+  -d '{
+    "action": "sell",
+    "destination": {
+      "type": "payment_method",
+      "payment_method_id": "payment123"
+    },
+    "currency": "btc"
+  }'
+```
 
-Value | Description
+> The result will be
+
+```json
+{
+  "transaction_id": "transaction123",
+  "address": "3EyTupDgqm5ETjwTn29QPWCkmTCoEv1WbT",
+  "status": "pending"
+}
+```
+
+This api call will initiate the sell transaction by providing a deposit address for the user to transfer bitcoins to.  Once the funds are available,
+and confirmed, the partner needs to call the [confirm sell](#confirm-sell) api to complete the sell transaction.  
+
+### HTTP Request
+
+`POST https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+
+### Request Parameters
+
+Parameter | Description
 --------- | -----------
-ssn|a document showing proof of the social security number
-dl|a scan of the person's driver's license
-address|a scan of recent utility bill or bank account statement showing the person's address
+action | this is always `sell`
+destination.type | the type of destination to receive the funds. One of: payment_method, or address
+destination.payment_method_id | the payment method id to receive the funds from a bitcoin sale
+currency | the crypto-currency the user is selling
+
+## Confirm Sell
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json" \
+  -X PATCH \
+  -d '{
+    "quote_id": "b3d7ce70-4d91-11e6-bfc6-14109fd9ceb9",
+    "transaction_id": "transaction123"
+  }'
+```
+
+> The quote returned will have the following format
+
+```json
+{
+	"transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
+	"status": "completed"
+}
+```
+
+Parameter | Description
+--------- | -----------
+action | this is `sell`
+quote_id | the id of the quote to be used to complete the sell transaction.  The amount of the quote must match that of the transaction otherwise this will fail
+transaction_id | the transaction which we are confirming
+
+### HTTP Request
+
+`PATCH https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
 
