@@ -572,8 +572,8 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<tra
 Parameter | Description
 --------- | -----------
 action | this is `sell`
-quote_id | the id of the quote to be used to complete the sell transaction.  The amount of the quote must match that of the transaction otherwise this will fail
-transaction_id | the transaction which we are confirming
+quote_id | the id of the quote to be used to complete the sell transaction.  The base amount of the quote must match that of the transaction otherwise this will fail
+transaction_id | the transaction which is being confirmed
 
 ### HTTP Request
 
