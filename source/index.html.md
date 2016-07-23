@@ -5,7 +5,7 @@ language_tabs:
   - shell
 
 toc_footers:
-  - <a href='www.sfox.com/partners'>Sign Up for a Partner Account</a>
+  - <a href=''>Sign Up for a Partner Account</a>
   - <a href='mailto:support@sfox.com'>Need help? Email us</a>
 
 includes:
