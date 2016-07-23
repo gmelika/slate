@@ -452,41 +452,6 @@ amount currency | the currency of the amount requested. In the case of "btcusd",
 
 `POST https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
 
-## Get Transaction Details
-
-```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
-  -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
-  -H "Content-type: application/json"
-```
-
-> The result will be
-
-```json
-{
-  "transaction_id": "transaction123",
-  "amount": "100",
-  "amount_currency": "usd",
-  "status": "pending"
-}
-```
-
-Use this api to get the status of a previously initiated transaction.  
-
-### HTTP Request
-
-`GET https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
-
-### Response Fields
-
-Parameter | Description
---------- | -----------
-transaction_id | same as the provided transaction_id
-amount | the amount of the transaction
-amount_currency | the currency of the amount specified
-status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
-
 ## Initiate Buy
 
 ```shell
@@ -636,4 +601,39 @@ transaction_id | the transaction which is being confirmed
 ### HTTP Request
 
 `PATCH https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+
+## Get Transaction Details
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json"
+```
+
+> The result will be
+
+```json
+{
+  "transaction_id": "transaction123",
+  "amount": "100",
+  "amount_currency": "usd",
+  "status": "pending"
+}
+```
+
+Use this api to get the status of a previously initiated transaction.  
+
+### HTTP Request
+
+`GET https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+
+### Response Fields
+
+Parameter | Description
+--------- | -----------
+transaction_id | same as the provided transaction_id
+amount | the amount of the transaction
+amount_currency | the currency of the amount specified
+status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
 
