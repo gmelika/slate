@@ -310,7 +310,7 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod"
 		"routing_number": "**89",
 		"account_number": "**67",
 		"nickname": "checking 1",
-    "currency": "usd"
+	    "currency": "usd"
 	}
 ]
 ```
@@ -348,7 +348,7 @@ curl "https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>"
 	"quote_currency": "usd",
 	"base_amount": "5",
 	"base_currency": "btc",
-  "expires_at": 1257894000000,
+    "expires_at": 1257894000000,
 	"fee": "75",
 	"fee_currency": "usd"
 }
@@ -410,12 +410,12 @@ then you will get a `404` back
 ```json
 {
 	"quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
-  "action": "buy",
+    "action": "buy",
 	"quote_amount": "3000",
 	"quote_currency": "usd",
 	"base_amount": "5",
 	"base_currency": "btc",
-  "expires_at": 1257894000000,
+    "expires_at": 1257894000000,
 	"fee": "75",
 	"fee_currency": "usd"
 }
