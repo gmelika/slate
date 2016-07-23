@@ -16,8 +16,7 @@ search: true
 
 # Introduction
 
-Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.  In this structure, our partners
-act as an intermediary between SFOX and their customers.
+Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.
 
 > To create an account, use this code:
 
@@ -30,25 +29,25 @@ curl "https://api.sfox.com/v2/partner/<partner name>/<path>" \
 SFOX uses partner IDs only for tracking purposes.
 
 <aside class="notice">
-You must replace "partner id" with your partner id provided by sfox.
+You must replace "partner id" with your partner id provided to you by SFOX.
 </aside>
 
 # Creating a Customer Account
 
-The typical process to create a customer account on SFOX is as follows:
+To create a customer account on SFOXs:
 
-1. Partner [creates an account](#signup) for the Customer
-2. SFOX returns an `account token` which is used on any further api call to identify the target account
-3. Partner collects KYC information and [sends it to SFOX](#verify-account)
-4. If required, the [Partner uploads](#upload-required-verification-documents) any customer documents as requested by SFOX
-5. Customer [adds a payment method](#add-payment-method) to the account
-6. Once the customer and the payment method are verified then the customer is allowed to buy/sell crypto currencies through SFOX
+1. [Create an account](#signup) for the Customer
+2. API returns an `account token` which is used for api call to identify the target account
+3. Collect KYC information and [sends it to SFOX](#verify-account)
+4. If required, [upload](#upload-required-verification-documents) customer documents as requested by SFOX
+5. [Add a payment method](#add-payment-method) to the account
+6. Once the customer and the payment method are verified, the customer is allowed to buy/sell crypto currencies with SFOX
 
 ## Signup
 
 This api is the first step with any new user interaction with the system.
-It create an account on SFOX for the customer.  Once the call is successful the Partner will receive an `account token` which it can
-use for further actions on the account on behalf of the customer.  [Read more](#account-fields) about the fields returned by this api.
+It create an account on SFOX for the customer.  Once the call is successful the API returns an `account token` which can be
+used for further actions on the account.  The `account token` should be encrypted and stored securely.  [Read more](#account-fields) about the fields returned by this api.
 
 ### Request Parameters
 
@@ -62,14 +61,14 @@ password | this is used to allow the user to recover account information
 
 Parameter | Description
 --------- | -----------
-token | this is the account token to be used in all further communications.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.
+token | account token to be used in all further communications regarding account.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.
 **verification_status** |
 <ul><li>level</li><li>required_docs</li></ul> | <ul><li>see [verification levels](#verification-levels) for further information</li><li>see [required docs](#required-docs) for more info</li></ul>
 can_buy | whether the user is permitted to buy from SFOX
 can_sell | whether the user is permitted to sell to SFOX
 limits | this describes both the user's total limits, and their available limits (after taking into account what they've used up already)
 
-> To create an account, use this code:
+> To create an account:
 
 ```shell
 # With shell, you can just pass the correct header with each request
@@ -83,7 +82,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
   }'
 ```
 
-> The result of the call will be in the following format:
+> The result of creating an account:
 
 ```json
 {
@@ -171,7 +170,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/<account id>/verify
 }
 ```
 
-This api allows you to submit personal information on the user for KYC purposes.  Before a user can buy/sell currencies they need to be fully
+To verify an account, please provide identifying information on the user for KYC purposes.  Before a user can buy/sell currencies they need to be fully
 verified.  This api allows the user to provide Personally Indetifiable Information, which we use to verify their identity.
 If the information matches without issues, their verification level will be marked `verified`.  This call returns the same [account](#account-fields)
 data structure as described before.
@@ -191,11 +190,11 @@ If the api, however, returns a list of [required documents](#required-docs) then
 Value | Description
 --------- | -----------
 ssn|a document showing proof of the social security number
-dl|a scan of the person's driver's license
+id|a scan of the person's state issued identification or driver's license bearing the person's photo, full name and date of birth
 address|a scan of recent utility bill or bank account statement showing the person's address
-passport|the user needs to provide a scan of the pages that include the person's picture, name and personal information.
+passport|a scan of the pages that include the passport number, person's photo, full name and date of birth.
 
-## Upload Required Verification Documents
+## To Upload Required Verification Documents
 
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/upload/sign" \
@@ -249,7 +248,7 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod" \
 }'
 ```
 
-> The above api will return the payment id and status:
+> Add payment method returns the payment id and status:
 
 ```json
 {
@@ -258,14 +257,15 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod" \
 }
 ```
 
-This api is used to add a payment method to the account.  Currently, this api only supports "ach" as a payment type.  
+To add a payment method to the account.  The payment method will be used when buying and selling currency.  Currently, this api only supports "ach" as a payment type.  
 
 ### Payment Status
 
-Statys | Description
+Status | Description
 ---------  | -----------
-pending|payment method requires verification. use the [payment verification](#verify-payment-method) api to finish adding the payment method
+pending|payment method requires verification.  User will get 2 deposits in their account and need to provide the amounts to activate the account.  Use the [payment verification](#verify-payment-method) api to finish adding the payment method
 active|payment method is ready to be used
+inactive|payment method is not valid and cannot be used
 
 ### HTTP Request
 
@@ -284,7 +284,7 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method
 }'
 ```
 
-> This api will return the payment method status:
+> Returns the payment method status:
 
 ```json
 {
@@ -293,7 +293,7 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method
 }
 ```
 
-Use this api for payment methods that are in the "pending" state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated
+Use Verify Payment Method for payment methods that are in the "pending" state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated
 
 ### HTTP Request
 
@@ -308,7 +308,7 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod"
   -H "Content-type: application/json"
 ```
 
-> The above command returns JSON structured like this:
+> Example result from Get Payment Methods:
 
 ```json
 [
