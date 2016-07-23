@@ -18,15 +18,7 @@ search: true
 
 Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.
 
-> To create an account, use this code:
-
-```shell
-# With shell, you can just pass the correct header with each request
-curl "https://api.sfox.com/v2/partner/<partner name>/<path>" \
-  -H "X-SFOX-PARTNER-ID: <partner id>"
-```
-
-SFOX uses partner IDs only for tracking purposes.
+SFOX uses partner IDs for tracking purposes only.
 
 <aside class="notice">
 You must replace "partner id" with your partner id provided to you by SFOX.
@@ -334,7 +326,7 @@ Returns a list of payment methods on the account
 ## Request a Quote
 
 ```shell
-curl "https://quotes.sfox.com/v2/partner/<partner id>/quote/<action>"
+curl "https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -356,8 +348,7 @@ curl "https://quotes.sfox.com/v2/partner/<partner id>/quote/<action>"
 	"quote_currency": "usd",
 	"base_amount": "5",
 	"base_currency": "btc",
-	"ttl": 3000,
-  "expires_at": ,
+  "expires_at": 1257894000000,
 	"fee": "75",
 	"fee_currency": "usd"
 }
@@ -368,7 +359,74 @@ a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v2/partner/<partner id>/quote/<action>/<base currency>/<quote currency>/<amount>/<amount currency>`
+`POST https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>`
+
+### Request Parameters
+
+Parameter | Description
+--------- | -----------
+action | "buy" or "sell"
+
+### Quote Fields
+
+Parameter | Description
+--------- | -----------
+action | "buy" or "sell"
+quote_amount | the amount offered by SFOX
+quote_currency | the currency of the quoted amount
+base_currency | the currency of the requested quote amount
+base_amount | the amount requested in the quote
+expires_at | expiration time of the quote, expressed as the number of seconds elapsed since January 1, 1970 UTC
+fee | the fee that will be charged on top of the quoted amount
+fee_currency | the currency of the fee charged
+quote_id | the unique id of this quote
+
+### Examples
+
+#### A quote to buy $20 worth of bitcoins
+
+`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
+
+#### A quote to buy 2 bitcoins
+
+`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
+
+#### A quote to sell 2.12345678 bitcoins
+
+`POST https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
+
+## Get Quote Details
+
+```shell
+curl "https://quotes.sfox.com/v1/quote/<quote id>"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <api_key>" \
+  -H "Content-type: application/json"
+```
+
+> The quote returned will have the following format.  If the quote has expired or the quote id is invalid
+then you will get a `404` back
+
+```json
+{
+	"quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+  "action": "buy",
+	"quote_amount": "3000",
+	"quote_currency": "usd",
+	"base_amount": "5",
+	"base_currency": "btc",
+  "expires_at": 1257894000000,
+	"fee": "75",
+	"fee_currency": "usd"
+}
+```
+
+This api allows you to request a quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
+a quote in both the base and quote currencies.
+
+### HTTP Request
+
+`POST https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>`
 
 ### Request Parameters
 
@@ -384,15 +442,15 @@ amount currency | the currency of the amount requested. In the case of "btcusd",
 
 #### A quote to buy $20 worth of bitcoins
 
-`GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
+`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
 
 #### A quote to buy 2 bitcoins
 
-`GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
+`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
 
 #### A quote to sell 2.12345678 bitcoins
 
-`GET https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
+`POST https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
 
 ## Get Transaction Details
 
