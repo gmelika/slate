@@ -186,7 +186,7 @@ id|a scan of the person's state issued identification or driver's license bearin
 address|a scan of recent utility bill or bank account statement showing the person's address
 passport|a scan of the pages that include the passport number, person's photo, full name and date of birth.
 
-## To Upload Required Verification Documents
+## Upload Required Verification Documents
 
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/upload/sign" \
