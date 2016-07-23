@@ -37,29 +37,6 @@ To create a customer account on SFOXs:
 
 ## Signup
 
-This api is the first step with any new user interaction with the system.
-It create an account on SFOX for the customer.  Once the call is successful the API returns an `account token` which can be
-used for further actions on the account.  The `account token` should be encrypted and stored securely.  [Read more](#account-fields) about the fields returned by this api.
-
-### Request Parameters
-
-Parameter | Description
---------- | -----------
-email | the email used by the customer
-username | this must be the same as the user's email
-password | this is used to allow the user to recover account information
-
-### Account Fields
-
-Parameter | Description
---------- | -----------
-token | account token to be used in all further communications regarding account.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.
-**verification_status** |
-<ul><li>level</li><li>required_docs</li></ul> | <ul><li>see [verification levels](#verification-levels) for further information</li><li>see [required docs](#required-docs) for more info</li></ul>
-can_buy | whether the user is permitted to buy from SFOX
-can_sell | whether the user is permitted to sell to SFOX
-limits | this describes both the user's total limits, and their available limits (after taking into account what they've used up already)
-
 > To create an account:
 
 ```shell
@@ -101,6 +78,29 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
   }
 }
 ```
+
+This api is the first step with any new user interaction with the system.
+It create an account on SFOX for the customer.  Once the call is successful the API returns an `account token` which can be
+used for further actions on the account.  The `account token` should be encrypted and stored securely.  [Read more](#account-fields) about the fields returned by this api.
+
+### Request Parameters
+
+Parameter | Description
+--------- | -----------
+email | the email used by the customer
+username | this must be the same as the user's email
+password | this is used to allow the user to recover account information
+
+### Account Fields
+
+Parameter | Description
+--------- | -----------
+token | account token to be used in all further communications regarding account.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.
+**verification_status** |
+<ul><li>level</li><li>required_docs</li></ul> | <ul><li>see [verification levels](#verification-levels) for further information</li><li>see [required docs](#required-docs) for more info</li></ul>
+can_buy | whether the user is permitted to buy from SFOX
+can_sell | whether the user is permitted to sell to SFOX
+limits | this describes both the user's total limits, and their available limits (after taking into account what they've used up already)
 
 ## Verify Account
 
@@ -321,7 +321,7 @@ Returns a list of payment methods on the account
 
 `POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod`
 
-# Quotes
+# Trade
 
 ## Request a Quote
 
