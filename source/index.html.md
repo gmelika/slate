@@ -378,7 +378,7 @@ action | "buy" or "sell"
 base currency | the base currency of the requested pair.  In the case of "btcusd", "btc" is the base currency
 quote currency | the quote currency of the requested pair.  In the case of "btcusd", "usd" is the quote currency
 amount | the amount requested
-amount currency | the currency of the amount requested
+amount currency | the currency of the amount requested. In the case of "btcusd", it can be "btc" or "usd"
 
 ### Examples
 
@@ -457,8 +457,7 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
 }
 ```
 
-This api call will initiate the buy transaction by withdrawing `amount` from the payment source specified.  Once the funds are available,
-the partner needs to call the [confirm buy](#confirm-buy) api to complete the purchase.  
+This api call will initiate the buy transaction by withdrawing `amount` from the payment source specified.  Once the funds are available, the transaction's status will change to ready.  The partner needs to call the [confirm buy](#confirm-buy) api to complete the purchase.  
 
 ### HTTP Request
 
@@ -497,8 +496,8 @@ curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<tra
 }
 ```
 
-Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided `quote_id`.  Both the amount
-specified in the quote and the transaction must match, otherwise the transaction will not confirm.
+Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided `quote_id`.  The amount
+specified in the Buy transaction must match the quote_amount + fees in the quote, otherwise the transaction will not confirm.
 
 ### HTTP Request
 
