@@ -111,7 +111,7 @@
       <div id="toc">
       </div>
         <ul class="toc-footer">
-            <li><a href='www.sfox.com/partners'>Sign Up for a Partner Account</a></li>
+            <li><a href=''>Sign Up for a Partner Account</a></li>
             <li><a href='mailto:support@sfox.com'>Need help? Email us</a></li>
         </ul>
     </div>
@@ -120,41 +120,74 @@
       <div class="content">
         <h1 id="introduction">Introduction</h1>
 
-<p>Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.  In this structure, our partners
-act as an intermediary between SFOX and their customers.</p>
+<p>Welcome to the SFOX API! The API allows you to offer buy/sell services to your customers through the SFOX platform.</p>
 
-<blockquote>
-<p>To create an account, use this code:</p>
-</blockquote>
-<pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/&lt;path&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span>
-</code></pre>
-
-<p>SFOX uses partner IDs only for tracking purposes.</p>
+<p>SFOX uses partner IDs for tracking purposes only.</p>
 
 <aside class="notice">
-You must replace &ldquo;partner id&rdquo; with your partner id provided by sfox.
+You must replace &ldquo;partner id&rdquo; with your partner id provided to you by SFOX.
 </aside>
 
 <h1 id="creating-a-customer-account">Creating a Customer Account</h1>
 
-<p>The typical process to create a customer account on SFOX is as follows:</p>
+<p>To create a customer account on SFOXs:</p>
 
 <ol>
-<li>Partner <a href="#signup">creates an account</a> for the Customer</li>
-<li>SFOX returns an <code class="prettyprint">account token</code> which is used on any further api call to identify the target account</li>
-<li>Partner collects KYC information and <a href="#verify-account">sends it to SFOX</a></li>
-<li>If required, the <a href="#upload-required-verification-documents">Partner uploads</a> any customer documents as requested by SFOX</li>
-<li>Customer <a href="#add-payment-method">adds a payment method</a> to the account</li>
-<li>Once the customer and the payment method are verified then the customer is allowed to buy/sell crypto currencies through SFOX</li>
+<li><a href="#signup">Create an account</a> for the Customer</li>
+<li>API returns an <code class="prettyprint">account token</code> which is used for api call to identify the target account</li>
+<li>Collect KYC information and <a href="#verify-account">sends it to SFOX</a></li>
+<li>If required, <a href="#upload-required-verification-documents">upload</a> customer documents as requested by SFOX</li>
+<li><a href="#add-payment-method">Add a payment method</a> to the account</li>
+<li>Once the customer and the payment method are verified, the customer is allowed to buy/sell crypto currencies with SFOX</li>
 </ol>
 
 <h2 id="signup">Signup</h2>
 
+<blockquote>
+<p>To create an account:</p>
+</blockquote>
+<pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
+curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
+  -d <span class="s1">'{
+    "username":"user@domain.com",
+    "email":"user@domain.com",
+    "password":"password123"
+  }'</span>
+</code></pre>
+
+<blockquote>
+<p>The result of creating an account:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;account token&gt;"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"account"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user123"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"verification_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"level"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unverified"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"can_buy"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"usd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
 <p>This api is the first step with any new user interaction with the system.
-It create an account on SFOX for the customer.  Once the call is successful the Partner will receive an <code class="prettyprint">account token</code> which it can
-use for further actions on the account on behalf of the customer.  <a href="#account-fields">Read more</a> about the fields returned by this api.</p>
+It create an account on SFOX for the customer.  Once the call is successful the API returns an <code class="prettyprint">account token</code> which can be
+used for further actions on the account.  The <code class="prettyprint">account token</code> should be encrypted and stored securely.  <a href="#account-fields">Read more</a> about the fields returned by this api.</p>
 
 <h3 id="request-parameters">Request Parameters</h3>
 
@@ -188,7 +221,7 @@ use for further actions on the account on behalf of the customer.  <a href="#acc
 </thead><tbody>
 <tr>
 <td>token</td>
-<td>this is the account token to be used in all further communications.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.</td>
+<td>account token to be used in all further communications regarding account.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.</td>
 </tr>
 <tr>
 <td><strong>verification_status</strong></td>
@@ -212,50 +245,8 @@ use for further actions on the account on behalf of the customer.  <a href="#acc
 </tr>
 </tbody></table>
 
-<blockquote>
-<p>To create an account, use this code:</p>
-</blockquote>
-<pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
-curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account"</span> <span class="se">\</span>
-  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
-  -d <span class="s1">'{
-    "username":"user@domain.com",
-    "email":"user@domain.com",
-    "password":"password123"
-  }'</span>
-</code></pre>
-
-<blockquote>
-<p>The result of the call will be in the following format:</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"token"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;account token&gt;"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"account"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user123"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"verification_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nt">"level"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unverified"</span><span class="w">
-    </span><span class="p">},</span><span class="w">
-    </span><span class="nt">"can_buy"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nt">"usd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
-          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
-          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
-        </span><span class="p">}</span><span class="w">
-      </span><span class="p">}</span><span class="w">
-    </span><span class="p">}</span><span class="w">
-  </span><span class="p">}</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
 <h2 id="verify-account">Verify Account</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account/&lt;account id&gt;/verify"</span> <span class="se">\</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account/verify"</span> <span class="se">\</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -312,7 +303,7 @@ curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/acco
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This api allows you to submit personal information on the user for KYC purposes.  Before a user can buy/sell currencies they need to be fully
+<p>To verify an account, please provide identifying information on the user for KYC purposes.  Before a user can buy/sell currencies they need to be fully
 verified.  This api allows the user to provide Personally Indetifiable Information, which we use to verify their identity.
 If the information matches without issues, their verification level will be marked <code class="prettyprint">verified</code>.  This call returns the same <a href="#account-fields">account</a>
 data structure as described before.</p>
@@ -354,8 +345,8 @@ data structure as described before.</p>
 <td>a document showing proof of the social security number</td>
 </tr>
 <tr>
-<td>dl</td>
-<td>a scan of the person&rsquo;s driver&rsquo;s license</td>
+<td>id</td>
+<td>a scan of the person&rsquo;s state issued identification or driver&rsquo;s license bearing the person&rsquo;s photo, full name and date of birth</td>
 </tr>
 <tr>
 <td>address</td>
@@ -363,12 +354,12 @@ data structure as described before.</p>
 </tr>
 <tr>
 <td>passport</td>
-<td>the user needs to provide a scan of the pages that include the person&rsquo;s picture, name and personal information.</td>
+<td>a scan of the pages that include the passport number, person&rsquo;s photo, full name and date of birth.</td>
 </tr>
 </tbody></table>
 
 <h2 id="upload-required-verification-documents">Upload Required Verification Documents</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/upload/sign"</span> <span class="se">\</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/uploads/sign"</span> <span class="se">\</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -402,7 +393,7 @@ data structure as described before.</p>
 <h1 id="payment-methods">Payment Methods</h1>
 
 <h2 id="add-payment-method">Add Payment Method</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/account/&lt;account id&gt;/paymentmethod"</span> <span class="se">\</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods"</span> <span class="se">\</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;account token&gt;:"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -420,7 +411,7 @@ data structure as described before.</p>
 </code></pre>
 
 <blockquote>
-<p>The above api will return the payment id and status:</p>
+<p>Add payment method returns the payment id and status:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
   </span><span class="nt">"payment_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
@@ -428,65 +419,70 @@ data structure as described before.</p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This api is used to add a payment method to the account.  Currently, this api only supports &ldquo;ach&rdquo; as a payment type.  </p>
+<p>To add a payment method to the account.  The payment method will be used when buying and selling currency.  Currently, this api only supports &ldquo;ach&rdquo; as a payment type.  </p>
 
 <h3 id="payment-status">Payment Status</h3>
 
 <table><thead>
 <tr>
-<th>Statys</th>
+<th>Status</th>
 <th>Description</th>
 </tr>
 </thead><tbody>
 <tr>
 <td>pending</td>
-<td>payment method requires verification. use the <a href="#verify-payment-method">payment verification</a> api to finish adding the payment method</td>
+<td>payment method requires verification.  User will get 2 deposits in their account and need to provide the amounts to activate the account.  Use the <a href="#verify-payment-method">payment verification</a> api to finish adding the payment method</td>
 </tr>
 <tr>
 <td>active</td>
 <td>payment method is ready to be used</td>
 </tr>
+<tr>
+<td>inactive</td>
+<td>payment method is not valid and cannot be used</td>
+</tr>
 </tbody></table>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://api.sfox.com/v2/account/&lt;account id&gt;/paymentmethod</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods</code></p>
 
 <h2 id="verify-payment-method">Verify Payment Method</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/account/&lt;account id&gt;/paymentmethod/&lt;payment method id&gt;/verify"</span> <span class="se">\</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods/verify"</span> <span class="se">\</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
+  "payment_method_id": "payment123
     "amount1": 0.12,
     "amount2": 0.34
 }'</span>
 </code></pre>
 
 <blockquote>
-<p>This api will return the payment method status:</p>
+<p>Returns the payment method status:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"payment_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"payment_method_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
   </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"active"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>Use this api for payment methods that are in the &ldquo;pending&rdquo; state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated</p>
+<p>Use Verify Payment Method for payment methods that are in the &ldquo;pending&rdquo; state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://api.sfox.com/v2/account/&lt;account id&gt;/paymentmethod/&lt;payment method id&gt;/verify</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods/verify</code></p>
 
 <h2 id="get-payment-methods">Get Payment Methods</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/account/&lt;account id&gt;/paymentmethod"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span>
 </code></pre>
 
 <blockquote>
-<p>The above command returns JSON structured like this:</p>
+<p>Example result from Get Payment Methods:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
@@ -495,7 +491,7 @@ data structure as described before.</p>
         </span><span class="nt">"routing_number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"**89"</span><span class="p">,</span><span class="w">
         </span><span class="nt">"account_number"</span><span class="p">:</span><span class="w"> </span><span class="s2">"**67"</span><span class="p">,</span><span class="w">
         </span><span class="nt">"nickname"</span><span class="p">:</span><span class="w"> </span><span class="s2">"checking 1"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="w">
+        </span><span class="nt">"currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">]</span><span class="w">
 </span></code></pre>
@@ -504,12 +500,12 @@ data structure as described before.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner id&gt;/account/&lt;account id&gt;/paymentmethod</code></p>
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/&lt;partner name&gt;/account/payment-methods</code></p>
 
-<h1 id="quotes">Quotes</h1>
+<h1 id="trade">Trade</h1>
 
 <h2 id="request-a-quote">Request a Quote</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://quotes.sfox.com/v2/partner/&lt;partner id&gt;/quote/&lt;action&gt;"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://quotes.sfox.com/v1/partner/&lt;partner name&gt;/quote/&lt;action&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -531,8 +527,7 @@ data structure as described before.</p>
     </span><span class="nt">"quote_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"base_amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btc"</span><span class="p">,</span><span class="w">
-    </span><span class="nt">"ttl"</span><span class="p">:</span><span class="w"> </span><span class="mi">3000</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"expires_at"</span><span class="p">:</span><span class="w"> </span><span class="p">,</span><span class="w">
+    </span><span class="nt">"expires_at"</span><span class="p">:</span><span class="w"> </span><span class="mi">1257894000000</span><span class="p">,</span><span class="w">
     </span><span class="nt">"fee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"75"</span><span class="p">,</span><span class="w">
     </span><span class="nt">"fee_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="w">
 </span><span class="p">}</span><span class="w">
@@ -543,7 +538,112 @@ a quote in both the base and quote currencies.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/&lt;partner id&gt;/quote/&lt;action&gt;/&lt;base currency&gt;/&lt;quote currency&gt;/&lt;amount&gt;/&lt;amount currency&gt;</code></p>
+<p><code class="prettyprint">POST https://quotes.sfox.com/v1/partner/&lt;partner name&gt;/quote/&lt;action&gt;</code></p>
+
+<h3 id="request-parameters">Request Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>action</td>
+<td>&ldquo;buy&rdquo; or &ldquo;sell&rdquo;</td>
+</tr>
+</tbody></table>
+
+<h3 id="quote-fields">Quote Fields</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>action</td>
+<td>&ldquo;buy&rdquo; or &ldquo;sell&rdquo;</td>
+</tr>
+<tr>
+<td>quote_amount</td>
+<td>the amount offered by SFOX</td>
+</tr>
+<tr>
+<td>quote_currency</td>
+<td>the currency of the quoted amount</td>
+</tr>
+<tr>
+<td>base_currency</td>
+<td>the currency of the requested quote amount</td>
+</tr>
+<tr>
+<td>base_amount</td>
+<td>the amount requested in the quote</td>
+</tr>
+<tr>
+<td>expires_at</td>
+<td>expiration time of the quote, expressed as the number of seconds elapsed since January 1, 1970 UTC</td>
+</tr>
+<tr>
+<td>fee</td>
+<td>the fee that will be charged on top of the quoted amount</td>
+</tr>
+<tr>
+<td>fee_currency</td>
+<td>the currency of the fee charged</td>
+</tr>
+<tr>
+<td>quote_id</td>
+<td>the unique id of this quote</td>
+</tr>
+</tbody></table>
+
+<h3 id="examples">Examples</h3>
+
+<h4 id="a-quote-to-buy-20-worth-of-bitcoins">A quote to buy $20 worth of bitcoins</h4>
+
+<p><code class="prettyprint">POST https://quotes.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd</code></p>
+
+<h4 id="a-quote-to-buy-2-bitcoins">A quote to buy 2 bitcoins</h4>
+
+<p><code class="prettyprint">POST https://quotes.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc</code></p>
+
+<h4 id="a-quote-to-sell-2-12345678-bitcoins">A quote to sell 2.12345678 bitcoins</h4>
+
+<p><code class="prettyprint">POST https://quotes.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc</code></p>
+
+<h2 id="get-quote-details">Get Quote Details</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://quotes.sfox.com/v1/quote/&lt;quote id&gt;"</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span>
+</code></pre>
+
+<blockquote>
+<p>The quote returned will have the following format.  If the quote has expired or the quote id is invalid
+then you will get a <code class="prettyprint">404</code> back</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+    </span><span class="nt">"quote_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"a5098dd0-4cb2-4256-9cb5e871fbe672d1"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"buy"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"quote_amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"3000"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"quote_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"base_amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"5"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"base_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"btc"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"expires_at"</span><span class="p">:</span><span class="w"> </span><span class="mi">1257894000000</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"fee"</span><span class="p">:</span><span class="w"> </span><span class="s2">"75"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"fee_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This api allows you to request a quote from SFOX for certain amount.  This is used for both buying/selling currencies.  The api also allows you to request
+a quote in both the base and quote currencies.</p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">POST https://quotes.sfox.com/v1/partner/&lt;partner name&gt;/quote/&lt;action&gt;</code></p>
 
 <h3 id="request-parameters">Request Parameters</h3>
 
@@ -571,7 +671,7 @@ a quote in both the base and quote currencies.</p>
 </tr>
 <tr>
 <td>amount currency</td>
-<td>the currency of the amount requested</td>
+<td>the currency of the amount requested. In the case of &ldquo;btcusd&rdquo;, it can be &ldquo;btc&rdquo; or &ldquo;usd&rdquo;</td>
 </tr>
 </tbody></table>
 
@@ -579,68 +679,18 @@ a quote in both the base and quote currencies.</p>
 
 <h4 id="a-quote-to-buy-20-worth-of-bitcoins">A quote to buy $20 worth of bitcoins</h4>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd</code></p>
 
 <h4 id="a-quote-to-buy-2-bitcoins">A quote to buy 2 bitcoins</h4>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc</code></p>
 
 <h4 id="a-quote-to-sell-2-12345678-bitcoins">A quote to sell 2.12345678 bitcoins</h4>
 
-<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc</code></p>
-
-<h2 id="get-transaction-details">Get Transaction Details</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;"</span>
-  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Content-type: application/json"</span>
-</code></pre>
-
-<blockquote>
-<p>The result will be</p>
-</blockquote>
-<pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"transaction_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"transaction123"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"amount_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pending"</span><span class="w">
-</span><span class="p">}</span><span class="w">
-</span></code></pre>
-
-<p>Use this api to get the status of a previously initiated transaction.  </p>
-
-<h3 id="http-request">HTTP Request</h3>
-
-<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;</code></p>
-
-<h3 id="response-fields">Response Fields</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>transaction_id</td>
-<td>same as the provided transaction_id</td>
-</tr>
-<tr>
-<td>amount</td>
-<td>the amount of the transaction</td>
-</tr>
-<tr>
-<td>amount_currency</td>
-<td>the currency of the amount specified</td>
-</tr>
-<tr>
-<td>status</td>
-<td>one of: <code class="prettyprint">pending</code>, <code class="prettyprint">failed</code>, <code class="prettyprint">rejected</code>, <code class="prettyprint">ready</code>, <code class="prettyprint">completed</code></td>
-</tr>
-</tbody></table>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc</code></p>
 
 <h2 id="initiate-buy">Initiate Buy</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -665,12 +715,11 @@ a quote in both the base and quote currencies.</p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>This api call will initiate the buy transaction by withdrawing <code class="prettyprint">amount</code> from the payment source specified.  Once the funds are available,
-the partner needs to call the <a href="#confirm-buy">confirm buy</a> api to complete the purchase.  </p>
+<p>This api call will initiate the buy transaction by withdrawing <code class="prettyprint">amount</code> from the payment source specified.  Once the funds are available, the transaction&rsquo;s status will change to ready.  The partner needs to call the <a href="#confirm-buy">confirm buy</a> api to complete the purchase.  </p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction</code></p>
 
 <h3 id="request-parameters">Request Parameters</h3>
 
@@ -703,7 +752,7 @@ the partner needs to call the <a href="#confirm-buy">confirm buy</a> api to comp
 </tbody></table>
 
 <h2 id="confirm-buy">Confirm Buy</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -723,15 +772,15 @@ the partner needs to call the <a href="#confirm-buy">confirm buy</a> api to comp
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
-<p>Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided <code class="prettyprint">quote_id</code>.  Both the amount
-specified in the quote and the transaction must match, otherwise the transaction will not confirm.</p>
+<p>Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided <code class="prettyprint">quote_id</code>.  The amount
+specified in the Buy transaction must match the quote_amount + fees in the quote, otherwise the transaction will not confirm.</p>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">PATCH https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;</code></p>
+<p><code class="prettyprint">PATCH https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;</code></p>
 
 <h2 id="initiate-sell">Initiate Sell</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -760,7 +809,7 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;</code></p>
+<p><code class="prettyprint">POST https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;</code></p>
 
 <h3 id="request-parameters">Request Parameters</h3>
 
@@ -789,7 +838,7 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
 </tbody></table>
 
 <h2 id="confirm-sell">Confirm Sell</h2>
-<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;"</span>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
@@ -821,17 +870,67 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
 </tr>
 <tr>
 <td>quote_id</td>
-<td>the id of the quote to be used to complete the sell transaction.  The amount of the quote must match that of the transaction otherwise this will fail</td>
+<td>the id of the quote to be used to complete the sell transaction.  The base amount of the quote must match that of the transaction otherwise this will fail</td>
 </tr>
 <tr>
 <td>transaction_id</td>
-<td>the transaction which we are confirming</td>
+<td>the transaction which is being confirmed</td>
 </tr>
 </tbody></table>
 
 <h3 id="http-request">HTTP Request</h3>
 
-<p><code class="prettyprint">PATCH https://api.sfox.com/v2/partner/&lt;partner id&gt;/&lt;account id&gt;/transaction/&lt;transaction id&gt;</code></p>
+<p><code class="prettyprint">PATCH https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;</code></p>
+
+<h2 id="get-transaction-details">Get Transaction Details</h2>
+<pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span>
+</code></pre>
+
+<blockquote>
+<p>The result will be</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"transaction_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"transaction123"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"amount"</span><span class="p">:</span><span class="w"> </span><span class="s2">"100"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"amount_currency"</span><span class="p">:</span><span class="w"> </span><span class="s2">"usd"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pending"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>Use this api to get the status of a previously initiated transaction.  </p>
+
+<h3 id="http-request">HTTP Request</h3>
+
+<p><code class="prettyprint">GET https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;</code></p>
+
+<h3 id="response-fields">Response Fields</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>transaction_id</td>
+<td>same as the provided transaction_id</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>the amount of the transaction</td>
+</tr>
+<tr>
+<td>amount_currency</td>
+<td>the currency of the amount specified</td>
+</tr>
+<tr>
+<td>status</td>
+<td>one of: <code class="prettyprint">pending</code>, <code class="prettyprint">failed</code>, <code class="prettyprint">rejected</code>, <code class="prettyprint">ready</code>, <code class="prettyprint">completed</code></td>
+</tr>
+</tbody></table>
 
           <h1 id="errors">Errors</h1>
 
