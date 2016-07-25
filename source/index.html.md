@@ -105,7 +105,7 @@ limits | this describes both the user's total limits, and their available limits
 ## Verify Account
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/account/<account id>/verify" \
+curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
@@ -189,7 +189,7 @@ passport|a scan of the pages that include the passport number, person's photo, f
 ## Upload Required Verification Documents
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/account/<account id>/upload/sign" \
+curl "https://api.sfox.com/v2/partner/<partner name>/uploads/sign" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
@@ -223,7 +223,7 @@ User documents are uploaded directly to S3 from the client browser.  The process
 ## Add Payment Method
 
 ```shell
-curl "https://api.sfox.com/v2/account/<account id>/paymentmethod" \
+curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>:" \
   -H "Content-type: application/json" \
@@ -261,16 +261,17 @@ inactive|payment method is not valid and cannot be used
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/account/<account id>/paymentmethod`
+`POST https://api.sfox.com/v2/partner/<partner name>/payment-methods`
 
 ## Verify Payment Method
 
 ```shell
-curl "https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method id>/verify" \
+curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
   -d '{
+  "payment_method_id": "payment123
 	"amount1": 0.12,
 	"amount2": 0.34
 }'
@@ -280,7 +281,7 @@ curl "https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method
 
 ```json
 {
-  "payment_id": "payment123",
+  "payment_method_id": "payment123",
   "status": "active"
 }
 ```
@@ -289,12 +290,12 @@ Use Verify Payment Method for payment methods that are in the "pending" state.  
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/account/<account id>/paymentmethod/<payment method id>/verify`
+`POST https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify`
 
 ## Get Payment Methods
 
 ```shell
-curl "https://api.sfox.com/v2/account/<account id>/paymentmethod"
+curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json"
@@ -319,14 +320,14 @@ Returns a list of payment methods on the account
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner id>/account/<account id>/paymentmethod`
+`GET https://api.sfox.com/v2/partner/<partner name>/account/payment-methods`
 
 # Trade
 
 ## Request a Quote
 
 ```shell
-curl "https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>"
+curl "https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -359,7 +360,7 @@ a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`POST https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>`
+`POST https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>`
 
 ### Request Parameters
 
@@ -385,15 +386,15 @@ quote_id | the unique id of this quote
 
 #### A quote to buy $20 worth of bitcoins
 
-`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
+`POST https://quotes.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
 
 #### A quote to buy 2 bitcoins
 
-`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
+`POST https://quotes.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
 
 #### A quote to sell 2.12345678 bitcoins
 
-`POST https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
+`POST https://quotes.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
 
 ## Get Quote Details
 
@@ -426,7 +427,7 @@ a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`POST https://quotes.sfox.com/v1/partner/<partner id>/quote/<action>`
+`POST https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>`
 
 ### Request Parameters
 
@@ -455,7 +456,7 @@ amount currency | the currency of the amount requested. In the case of "btcusd",
 ## Initiate Buy
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
+curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -484,7 +485,7 @@ This api call will initiate the buy transaction by withdrawing `amount` from the
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction`
+`POST https://api.sfox.com/v2/partner/<partner name>/transaction`
 
 ### Request Parameters
 
@@ -499,7 +500,7 @@ amount | the amount that'll be used for the purchase transaction
 ## Confirm Buy
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -524,12 +525,12 @@ specified in the Buy transaction must match the quote_amount + fees in the quote
 
 ### HTTP Request
 
-`PATCH https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+`PATCH https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ## Initiate Sell
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction"
+curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -558,7 +559,7 @@ and confirmed, the partner needs to call the [confirm sell](#confirm-sell) api t
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+`POST https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ### Request Parameters
 
@@ -572,7 +573,7 @@ currency | the crypto-currency the user is selling
 ## Confirm Sell
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
@@ -600,12 +601,12 @@ transaction_id | the transaction which is being confirmed
 
 ### HTTP Request
 
-`PATCH https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+`PATCH https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ## Get Transaction Details
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>"
+curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json"
@@ -626,7 +627,7 @@ Use this api to get the status of a previously initiated transaction.
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v2/partner/<partner id>/<account id>/transaction/<transaction id>`
+`GET https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ### Response Fields
 
