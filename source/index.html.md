@@ -64,15 +64,13 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
     "can_buy": false,
     "can_sell": false,
     "limits": {
-      "usd": {
-        "available": {
-          "buy": 5000,
-          "sell": 5000
-        },
-        "total": {
-          "buy": 5000,
-          "sell": 5000
-        }
+      "available": {
+        "buy": 5000,
+        "sell": 5000
+      },
+      "total": {
+        "buy": 5000,
+        "sell": 5000
       }
     }
   }
@@ -82,6 +80,64 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
 This api is the first step with any new user interaction with the system.
 It create an account on SFOX for the customer.  Once the call is successful the API returns an `account token` which can be
 used for further actions on the account.  The `account token` should be encrypted and stored securely.  [Read more](#account-fields) about the fields returned by this api.
+
+### Request Parameters
+
+Parameter | Description
+--------- | -----------
+email | the email used by the customer
+username | this must be the same as the user's email
+password | this is used to allow the user to recover account information
+
+### Account Fields
+
+Parameter | Description
+--------- | -----------
+token | account token to be used in all further communications regarding account.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.
+**verification_status** |
+<ul><li>level</li><li>required_docs</li></ul> | <ul><li>see [verification levels](#verification-levels) for further information</li><li>see [required docs](#required-docs) for more info</li></ul>
+can_buy | whether the user is permitted to buy from SFOX
+can_sell | whether the user is permitted to sell to SFOX
+limits | this describes both the user's total limits, and their available limits (after taking into account what they've used up already)
+
+## Get Account Info
+
+> To create an account:
+
+```shell
+# With shell, you can just pass the correct header with each request
+curl "https://api.sfox.com/v2/partner/<partner name>/account" \
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <account token>" \
+  -H "Content-type: application/json"
+```
+
+> The result of creating an account:
+
+```json
+{
+  "account": {
+    "id": "user123",
+    "verification_status": {
+      "level": "unverified"
+    },
+    "can_buy": false,
+    "can_sell": false,
+    "limits": {
+      "available": {
+        "buy": 5000,
+        "sell": 5000
+      },
+      "total": {
+        "buy": 5000,
+        "sell": 5000
+      }
+    }
+  }
+}
+```
+
+This api will return account information for the provided `account token`
 
 ### Request Parameters
 
@@ -146,16 +202,14 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
 		"can_buy": true,
 		"can_sell": true,
 		"limits": {
-			"usd": {
-				"available": {
-					"buy": 5000,
-					"sell": 5000
-				},
-				"total": {
-					"buy": 10000,
-					"sell": 10000
-				}
-			}
+            "available": {
+                "buy": 5000,
+                "sell": 5000
+            },
+            "total": {
+                "buy": 10000,
+                "sell": 10000
+            }
 		}
 	}
 }
@@ -312,10 +366,10 @@ inactive|payment method is not valid and cannot be used
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -d '{
-  "payment_method_id": "payment123
+    "payment_method_id": "payment123",
 	"amount1": 0.12,
 	"amount2": 0.34
 }'
@@ -348,7 +402,7 @@ amount2 | the other deposit amount initiated by SFOX
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json"
 ```
 
@@ -380,7 +434,6 @@ Returns a list of payment methods on the account
 ```shell
 curl "https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json" \
   -d '{
     "action": "buy",
@@ -456,7 +509,6 @@ quote_id | the unique id of this quote
 ```shell
 curl "https://quotes.sfox.com/v1/quote/<quote id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
   -H "Content-type: application/json"
 ```
 
@@ -504,7 +556,7 @@ a quote in both the base and quote currencies.
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -d '{
     "action": "buy",
@@ -558,7 +610,7 @@ amount | the amount that'll be used for the purchase transaction
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -X PATCH \
   -d '{
@@ -596,7 +648,7 @@ transaction_id | the transaction which is being confirmed
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -d '{
     "action": "sell",
@@ -647,7 +699,7 @@ status | one of: `pending`, `failed`, `rejected`, `ready`, `completed`
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -X PATCH \
   -d '{
@@ -682,7 +734,7 @@ transaction_id | the transaction which is being confirmed
 ```shell
 curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <api_key>" \
+  -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json"
 ```
 
