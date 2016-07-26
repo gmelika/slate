@@ -122,7 +122,6 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
   "birth_day": 1,
   "birth_month": 1,
   "birth_year": 1990,
-  "ssn": 123456789,
   "identity": {
     "type": "driver_license",
     "number": "b1234567",
@@ -166,6 +165,34 @@ To verify an account, please provide identifying information on the user for KYC
 verified.  This api allows the user to provide Personally Indetifiable Information, which we use to verify their identity.
 If the information matches without issues, their verification level will be marked `verified`.  This call returns the same [account](#account-fields)
 data structure as described before.
+
+### Request Parameters
+
+Level | Description
+--------- | -----------
+firstname | The legal first name of the customer.
+middlename | The legal middle name of the customer.
+lastname | The legal last name of the customer.
+street1 | The primary street address of the customer.
+street2 | The second address line typically used for apartment or suite numbers.
+city | The city name of the customer.
+state | The state name of the customer.
+zipcode | The zip code of the customer. Also known as a postal code.
+country | The country of the customer. Should be of the ISO code form.  Currently this limited to `US`
+birth_day | The integer day of birth of the person.
+birth_month | The integer month of birth of the person.
+birth_year | The integer year of birth of the person.
+identity | This is an object containing the following fields: <br/> <ul><li>type: see [Identity Types](#identity-types)</li><li>number: The number associated with the form of identification used.</li><li>country: The country associated with the form of identification used.  Currently this must match the address country. otherwise the verification will fail</li></ul>
+
+
+### Identity Types
+
+Level | Description
+--------- | -----------
+drivers_license | Driver's license 
+passport | Passport
+ssn | Social Security Number
+
 
 ### Verification levels
 
@@ -230,7 +257,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods" \
   -d '{
 	"type": "ach",
 	"ach": {
-    "currency": "usd",
+        "currency": "usd",
 		"routing_number": "0123456789",
 		"account_number": "0001112345667",
 		"name1": "john doe",
@@ -244,12 +271,29 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods" \
 
 ```json
 {
-  "payment_id": "payment123",
-  "status": "pending"
+    "payment_id": "payment123",
+    "status": "pending"
 }
 ```
 
 To add a payment method to the account.  The payment method will be used when buying and selling currency.  Currently, this api only supports "ach" as a payment type.  
+
+### Request Fields
+
+Field | Description
+---------  | -----------
+type | currently this is limited to `ach` only
+ach | an object describing the bank account to use for ACH transactions. See [ACH Account](#ach-account)
+
+### ACH Account
+
+Field | Description
+---------  | -----------
+routing_number | the bank's routing (ABA) number
+account_number | the customer's account number with the bank
+name1 | the full name on the account
+name2 | if this is a joint account, the secondary name on the account
+nickname | a name for the customer to identify this account on SFOX
 
 ### Payment Status
 
@@ -287,6 +331,13 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
 ```
 
 Use Verify Payment Method for payment methods that are in the "pending" state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated
+
+### Request Fields
+
+Field | Description
+---------  | -----------
+amount1 | one of the deposit amounts initiated by SFOX (order is not important) 
+amount2 | the other deposit amount initiated by SFOX
 
 ### HTTP Request
 
@@ -367,18 +418,22 @@ a quote in both the base and quote currencies.
 Parameter | Description
 --------- | -----------
 action | "buy" or "sell"
+base currency | the base currency of the requested pair.  In the case of "btcusd", "btc" is the base currency
+quote currency | the quote currency of the requested pair.  In the case of "btcusd", "usd" is the quote currency
+amount | the amount requested
+amount currency | the currency of the amount requested. In the case of "btcusd", it can be "btc" or "usd"
 
-### Quote Fields
+### Response Fields
 
 Parameter | Description
 --------- | -----------
 action | "buy" or "sell"
-quote_amount | the amount offered by SFOX
-quote_currency | the currency of the quoted amount
-base_currency | the currency of the requested quote amount
-base_amount | the amount requested in the quote
+quote_currency | the quote currency (in the case of `btcusd` this will be `usd`)
+quote_amount | the quote amount
+base_currency | the base currency (in the case of `btcusd` this will be `btc`)
+base_amount | the base amount
 expires_at | expiration time of the quote, expressed as the number of seconds elapsed since January 1, 1970 UTC
-fee | the fee that will be charged on top of the quoted amount
+fee | this is the fee charged, which has already been included in the quote_amount
 fee_currency | the currency of the fee charged
 quote_id | the unique id of this quote
 
@@ -429,15 +484,6 @@ a quote in both the base and quote currencies.
 
 `POST https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>`
 
-### Request Parameters
-
-Parameter | Description
---------- | -----------
-action | "buy" or "sell"
-base currency | the base currency of the requested pair.  In the case of "btcusd", "btc" is the base currency
-quote currency | the quote currency of the requested pair.  In the case of "btcusd", "usd" is the quote currency
-amount | the amount requested
-amount currency | the currency of the amount requested. In the case of "btcusd", it can be "btc" or "usd"
 
 ### Examples
 
@@ -497,6 +543,16 @@ payment_method_id | the funding source for the transaction (if this is a buy tra
 amount_currency | the name of the fiat currency the user wishes to use
 amount | the amount that'll be used for the purchase transaction 
 
+### Response Fields
+
+Parameter | Description
+--------- | -----------
+transaction_id | the id for this transaction
+status | 
+payment_method_id | the funding source for the transaction (if this is a buy transaction)
+amount_currency | the name of the fiat currency the user wishes to use
+amount | the amount that'll be used for the purchase transaction 
+
 ## Confirm Buy
 
 ```shell
@@ -521,7 +577,15 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id
 ```
 
 Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided `quote_id`.  The amount
-specified in the Buy transaction must match the quote_amount + fees in the quote, otherwise the transaction will not confirm.
+specified in the Buy transaction must match the quote amount, otherwise the transaction will not confirm.
+
+### Request Parameters
+
+Parameter | Description
+--------- | -----------
+action | this is `buy`
+quote_id | the id of the quote to be used to complete the sell transaction.  The base amount of the quote must match that of the transaction otherwise this will fail
+transaction_id | the transaction which is being confirmed
 
 ### HTTP Request
 
@@ -570,6 +634,14 @@ destination.type | the type of destination to receive the funds. One of: payment
 destination.payment_method_id | the payment method id to receive the funds from a bitcoin sale
 currency | the crypto-currency the user is selling
 
+### Response Fields
+
+Parameter | Description
+--------- | -----------
+transaction_id | the same transaction_id used in the request
+address | the address the user needs to send the bitcoins to complete this transaction
+status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
+
 ## Confirm Sell
 
 ```shell
@@ -592,6 +664,8 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id
 	"status": "completed"
 }
 ```
+
+### Request Parameters
 
 Parameter | Description
 --------- | -----------
