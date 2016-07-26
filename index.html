@@ -170,15 +170,13 @@ curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/acco
     </span><span class="nt">"can_buy"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
     </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
     </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-      </span><span class="nt">"usd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-        </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
-          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
-        </span><span class="p">},</span><span class="w">
-        </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-          </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
-          </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
-        </span><span class="p">}</span><span class="w">
+      </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
       </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
   </span><span class="p">}</span><span class="w">
@@ -188,6 +186,101 @@ curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/acco
 <p>This api is the first step with any new user interaction with the system.
 It create an account on SFOX for the customer.  Once the call is successful the API returns an <code class="prettyprint">account token</code> which can be
 used for further actions on the account.  The <code class="prettyprint">account token</code> should be encrypted and stored securely.  <a href="#account-fields">Read more</a> about the fields returned by this api.</p>
+
+<h3 id="request-parameters">Request Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>email</td>
+<td>the email used by the customer</td>
+</tr>
+<tr>
+<td>username</td>
+<td>this must be the same as the user&rsquo;s email</td>
+</tr>
+<tr>
+<td>password</td>
+<td>this is used to allow the user to recover account information</td>
+</tr>
+</tbody></table>
+
+<h3 id="account-fields">Account Fields</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>token</td>
+<td>account token to be used in all further communications regarding account.  There is no way for the partner to retrieve this token at a future time.  Partner is responsible for securily storing this token.</td>
+</tr>
+<tr>
+<td><strong>verification_status</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><ul><li>level</li><li>required_docs</li></ul></td>
+<td><ul><li>see <a href="#verification-levels">verification levels</a> for further information</li><li>see <a href="#required-docs">required docs</a> for more info</li></ul></td>
+</tr>
+<tr>
+<td>can_buy</td>
+<td>whether the user is permitted to buy from SFOX</td>
+</tr>
+<tr>
+<td>can_sell</td>
+<td>whether the user is permitted to sell to SFOX</td>
+</tr>
+<tr>
+<td>limits</td>
+<td>this describes both the user&rsquo;s total limits, and their available limits (after taking into account what they&rsquo;ve used up already)</td>
+</tr>
+</tbody></table>
+
+<h2 id="get-account-info">Get Account Info</h2>
+
+<blockquote>
+<p>To create an account:</p>
+</blockquote>
+<pre class="highlight shell"><code><span class="c"># With shell, you can just pass the correct header with each request</span>
+curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/account"</span> <span class="se">\</span>
+  -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Content-type: application/json"</span>
+</code></pre>
+
+<blockquote>
+<p>The result of creating an account:</p>
+</blockquote>
+<pre class="highlight json"><code><span class="p">{</span><span class="w">
+  </span><span class="nt">"account"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"user123"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"verification_status"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"level"</span><span class="p">:</span><span class="w"> </span><span class="s2">"unverified"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nt">"can_buy"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+      </span><span class="p">},</span><span class="w">
+      </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+        </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre>
+
+<p>This api will return account information for the provided <code class="prettyprint">account token</code></p>
 
 <h3 id="request-parameters">Request Parameters</h3>
 
@@ -287,15 +380,13 @@ used for further actions on the account.  The <code class="prettyprint">account 
         </span><span class="nt">"can_buy"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
         </span><span class="nt">"can_sell"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
         </span><span class="nt">"limits"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-            </span><span class="nt">"usd"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                    </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
-                    </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
-                </span><span class="p">},</span><span class="w">
-                </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
-                    </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w">
-                    </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
-                </span><span class="p">}</span><span class="w">
+            </span><span class="nt">"available"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+            </span><span class="p">},</span><span class="w">
+            </span><span class="nt">"total"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="nt">"buy"</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w">
+                </span><span class="nt">"sell"</span><span class="p">:</span><span class="w"> </span><span class="mi">10000</span><span class="w">
             </span><span class="p">}</span><span class="w">
         </span><span class="p">}</span><span class="w">
     </span><span class="p">}</span><span class="w">
@@ -581,10 +672,10 @@ data structure as described before.</p>
 <h2 id="verify-payment-method">Verify Payment Method</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods/verify"</span> <span class="se">\</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
-  "payment_method_id": "payment123
+    "payment_method_id": "payment123",
     "amount1": 0.12,
     "amount2": 0.34
 }'</span>
@@ -626,7 +717,7 @@ data structure as described before.</p>
 <h2 id="get-payment-methods">Get Payment Methods</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/payment-methods"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span>
 </code></pre>
 
@@ -656,7 +747,6 @@ data structure as described before.</p>
 <h2 id="request-a-quote">Request a Quote</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://quotes.sfox.com/v1/partner/&lt;partner name&gt;/quote/&lt;action&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
     "action": "buy",
@@ -782,7 +872,6 @@ a quote in both the base and quote currencies.</p>
 <h2 id="get-quote-details">Get Quote Details</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://quotes.sfox.com/v1/quote/&lt;quote id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span>
 </code></pre>
 
@@ -827,7 +916,7 @@ a quote in both the base and quote currencies.</p>
 <h2 id="initiate-buy">Initiate Buy</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
     "action": "buy",
@@ -919,7 +1008,7 @@ a quote in both the base and quote currencies.</p>
 <h2 id="confirm-buy">Confirm Buy</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -X PATCH <span class="se">\</span>
   -d <span class="s1">'{
@@ -969,7 +1058,7 @@ specified in the Buy transaction must match the quote amount, otherwise the tran
 <h2 id="initiate-sell">Initiate Sell</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -d <span class="s1">'{
     "action": "sell",
@@ -1049,7 +1138,7 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
 <h2 id="confirm-sell">Confirm Sell</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span> <span class="se">\</span>
   -X PATCH <span class="se">\</span>
   -d <span class="s1">'{
@@ -1096,7 +1185,7 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
 <h2 id="get-transaction-details">Get Transaction Details</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
-  -H <span class="s2">"Authorization: Bearer &lt;api_key&gt;"</span> <span class="se">\</span>
+  -H <span class="s2">"Authorization: Bearer &lt;account token&gt;"</span> <span class="se">\</span>
   -H <span class="s2">"Content-type: application/json"</span>
 </code></pre>
 
