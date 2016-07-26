@@ -552,9 +552,25 @@ a quote in both the base and quote currencies.</p>
 <td>action</td>
 <td>&ldquo;buy&rdquo; or &ldquo;sell&rdquo;</td>
 </tr>
+<tr>
+<td>base currency</td>
+<td>the base currency of the requested pair.  In the case of &ldquo;btcusd&rdquo;, &ldquo;btc&rdquo; is the base currency</td>
+</tr>
+<tr>
+<td>quote currency</td>
+<td>the quote currency of the requested pair.  In the case of &ldquo;btcusd&rdquo;, &ldquo;usd&rdquo; is the quote currency</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>the amount requested</td>
+</tr>
+<tr>
+<td>amount currency</td>
+<td>the currency of the amount requested. In the case of &ldquo;btcusd&rdquo;, it can be &ldquo;btc&rdquo; or &ldquo;usd&rdquo;</td>
+</tr>
 </tbody></table>
 
-<h3 id="quote-fields">Quote Fields</h3>
+<h3 id="response-fields">Response Fields</h3>
 
 <table><thead>
 <tr>
@@ -645,36 +661,6 @@ a quote in both the base and quote currencies.</p>
 
 <p><code class="prettyprint">POST https://quotes.sfox.com/v1/partner/&lt;partner name&gt;/quote/&lt;action&gt;</code></p>
 
-<h3 id="request-parameters">Request Parameters</h3>
-
-<table><thead>
-<tr>
-<th>Parameter</th>
-<th>Description</th>
-</tr>
-</thead><tbody>
-<tr>
-<td>action</td>
-<td>&ldquo;buy&rdquo; or &ldquo;sell&rdquo;</td>
-</tr>
-<tr>
-<td>base currency</td>
-<td>the base currency of the requested pair.  In the case of &ldquo;btcusd&rdquo;, &ldquo;btc&rdquo; is the base currency</td>
-</tr>
-<tr>
-<td>quote currency</td>
-<td>the quote currency of the requested pair.  In the case of &ldquo;btcusd&rdquo;, &ldquo;usd&rdquo; is the quote currency</td>
-</tr>
-<tr>
-<td>amount</td>
-<td>the amount requested</td>
-</tr>
-<tr>
-<td>amount currency</td>
-<td>the currency of the amount requested. In the case of &ldquo;btcusd&rdquo;, it can be &ldquo;btc&rdquo; or &ldquo;usd&rdquo;</td>
-</tr>
-</tbody></table>
-
 <h3 id="examples">Examples</h3>
 
 <h4 id="a-quote-to-buy-20-worth-of-bitcoins">A quote to buy $20 worth of bitcoins</h4>
@@ -751,6 +737,36 @@ a quote in both the base and quote currencies.</p>
 </tr>
 </tbody></table>
 
+<h3 id="response-fields">Response Fields</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>transaction_id</td>
+<td>the id for this transaction</td>
+</tr>
+<tr>
+<td>status</td>
+<td></td>
+</tr>
+<tr>
+<td>payment_method_id</td>
+<td>the funding source for the transaction (if this is a buy transaction)</td>
+</tr>
+<tr>
+<td>amount_currency</td>
+<td>the name of the fiat currency the user wishes to use</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>the amount that&rsquo;ll be used for the purchase transaction</td>
+</tr>
+</tbody></table>
+
 <h2 id="confirm-buy">Confirm Buy</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
@@ -774,6 +790,28 @@ a quote in both the base and quote currencies.</p>
 
 <p>Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided <code class="prettyprint">quote_id</code>.  The amount
 specified in the Buy transaction must match the quote_amount + fees in the quote, otherwise the transaction will not confirm.</p>
+
+<h3 id="request-parameters">Request Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>action</td>
+<td>this is <code class="prettyprint">buy</code></td>
+</tr>
+<tr>
+<td>quote_id</td>
+<td>the id of the quote to be used to complete the sell transaction.  The base amount of the quote must match that of the transaction otherwise this will fail</td>
+</tr>
+<tr>
+<td>transaction_id</td>
+<td>the transaction which is being confirmed</td>
+</tr>
+</tbody></table>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -837,6 +875,28 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
 </tr>
 </tbody></table>
 
+<h3 id="response-fields">Response Fields</h3>
+
+<table><thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>transaction_id</td>
+<td>the same transaction_id used in the request</td>
+</tr>
+<tr>
+<td>address</td>
+<td>the address the user needs to send the bitcoins to complete this transaction</td>
+</tr>
+<tr>
+<td>status</td>
+<td>one of: <code class="prettyprint">pending</code>, <code class="prettyprint">failed</code>, <code class="prettyprint">rejected</code>, <code class="prettyprint">ready</code>, <code class="prettyprint">completed</code></td>
+</tr>
+</tbody></table>
+
 <h2 id="confirm-sell">Confirm Sell</h2>
 <pre class="highlight shell"><code>curl <span class="s2">"https://api.sfox.com/v2/partner/&lt;partner name&gt;/transaction/&lt;transaction id&gt;"</span>
   -H <span class="s2">"X-SFOX-PARTNER-ID: &lt;partner id&gt;"</span> <span class="se">\</span>
@@ -857,6 +917,8 @@ and confirmed, the partner needs to call the <a href="#confirm-sell">confirm sel
     </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"completed"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
+
+<h3 id="request-parameters">Request Parameters</h3>
 
 <table><thead>
 <tr>
