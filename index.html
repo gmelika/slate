@@ -365,7 +365,7 @@ data structure as described before.</p>
 </tr>
 <tr>
 <td>identity</td>
-<td>This is an object containing the following fields: <br/> <ul><li>type: see <a href="#identify-types">Identity Types</a></li><li>number: The number associated with the form of identification used.</li><li>country: The country associated with the form of identification used.  Currently this must match the address country. otherwise the verification will fail</li></ul></td>
+<td>This is an object containing the following fields: <br/> <ul><li>type: see <a href="#identity-types">Identity Types</a></li><li>number: The number associated with the form of identification used.</li><li>country: The country associated with the form of identification used.  Currently this must match the address country. otherwise the verification will fail</li></ul></td>
 </tr>
 </tbody></table>
 
@@ -483,7 +483,7 @@ data structure as described before.</p>
   -d <span class="s1">'{
     "type": "ach",
     "ach": {
-    "currency": "usd",
+        "currency": "usd",
         "routing_number": "0123456789",
         "account_number": "0001112345667",
         "name1": "john doe",
@@ -497,12 +497,60 @@ data structure as described before.</p>
 <p>Add payment method returns the payment id and status:</p>
 </blockquote>
 <pre class="highlight json"><code><span class="p">{</span><span class="w">
-  </span><span class="nt">"payment_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
-  </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pending"</span><span class="w">
+    </span><span class="nt">"payment_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"payment123"</span><span class="p">,</span><span class="w">
+    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pending"</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
 
 <p>To add a payment method to the account.  The payment method will be used when buying and selling currency.  Currently, this api only supports &ldquo;ach&rdquo; as a payment type.  </p>
+
+<h3 id="request-fields">Request Fields</h3>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>type</td>
+<td>currently this is limited to <code class="prettyprint">ach</code> only</td>
+</tr>
+<tr>
+<td>ach</td>
+<td>an object describing the bank account to use for ACH transactions. See <a href="#ach-account">ACH Account</a></td>
+</tr>
+</tbody></table>
+
+<h3 id="ach-account">ACH Account</h3>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>routing_number</td>
+<td>the bank&rsquo;s routing (ABA) number</td>
+</tr>
+<tr>
+<td>account_number</td>
+<td>the customer&rsquo;s account number with the bank</td>
+</tr>
+<tr>
+<td>name1</td>
+<td>the full name on the account</td>
+</tr>
+<tr>
+<td>name2</td>
+<td>if this is a joint account, the secondary name on the account</td>
+</tr>
+<tr>
+<td>nickname</td>
+<td>a name for the customer to identify this account on SFOX</td>
+</tr>
+</tbody></table>
 
 <h3 id="payment-status">Payment Status</h3>
 
@@ -552,6 +600,24 @@ data structure as described before.</p>
 </span></code></pre>
 
 <p>Use Verify Payment Method for payment methods that are in the &ldquo;pending&rdquo; state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated</p>
+
+<h3 id="request-fields">Request Fields</h3>
+
+<table><thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>amount1</td>
+<td>one of the deposit amounts initiated by SFOX (order is not important)</td>
+</tr>
+<tr>
+<td>amount2</td>
+<td>the other deposit amount initiated by SFOX</td>
+</tr>
+</tbody></table>
 
 <h3 id="http-request">HTTP Request</h3>
 
@@ -872,7 +938,7 @@ a quote in both the base and quote currencies.</p>
 </span></code></pre>
 
 <p>Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided <code class="prettyprint">quote_id</code>.  The amount
-specified in the Buy transaction must match the quote_amount + fees in the quote, otherwise the transaction will not confirm.</p>
+specified in the Buy transaction must match the quote amount, otherwise the transaction will not confirm.</p>
 
 <h3 id="request-parameters">Request Parameters</h3>
 
