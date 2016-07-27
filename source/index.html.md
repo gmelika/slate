@@ -193,15 +193,15 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
 
 ```json
 {
-	"account": {
-		"id": "<account id>",
-		"verification_status": {
-			"level": "needs_documents",
-			"required_docs": ["address", "ssn"]
-		},
-		"can_buy": true,
-		"can_sell": true,
-		"limits": {
+    "account": {
+        "id": "<account id>",
+        "verification_status": {
+            "level": "needs_documents",
+            "required_docs": ["address", "ssn"]
+        },
+        "can_buy": true,
+        "can_sell": true,
+        "limits": {
             "available": {
                 "buy": 5000,
                 "sell": 5000
@@ -210,8 +210,8 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
                 "buy": 10000,
                 "sell": 10000
             }
-		}
-	}
+        }
+    }
 }
 ```
 
@@ -309,15 +309,15 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods" \
   -H "Authorization: Bearer <account token>:" \
   -H "Content-type: application/json" \
   -d '{
-	"type": "ach",
-	"ach": {
+    "type": "ach",
+    "ach": {
         "currency": "usd",
-		"routing_number": "0123456789",
-		"account_number": "0001112345667",
-		"name1": "john doe",
-		"name2": "jane doe",
-		"nickname": "checking 1"
-	}
+        "routing_number": "0123456789",
+        "account_number": "0001112345667",
+        "name1": "john doe",
+        "name2": "jane doe",
+        "nickname": "checking 1"
+    }
 }'
 ```
 
@@ -370,8 +370,8 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
   -H "Content-type: application/json" \
   -d '{
     "payment_method_id": "payment123",
-	"amount1": 0.12,
-	"amount2": 0.34
+    "amount1": 0.12,
+    "amount2": 0.34
 }'
 ```
 
@@ -410,14 +410,14 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods"
 
 ```json
 [
-	{
-		"type": "ach",
-		"status": "active",
-		"routing_number": "**89",
-		"account_number": "**67",
-		"nickname": "checking 1",
-	    "currency": "usd"
-	}
+    {
+        "type": "ach",
+        "status": "active",
+        "routing_number": "**89",
+        "account_number": "**67",
+        "nickname": "checking 1",
+        "currency": "usd"
+    }
 ]
 ```
 
@@ -448,14 +448,14 @@ curl "https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>"
 
 ```json
 {
-	"quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
-	"quote_amount": "3000",
-	"quote_currency": "usd",
-	"base_amount": "5",
-	"base_currency": "btc",
-    "expires_at": 1257894000000,
-	"fee": "75",
-	"fee_currency": "usd"
+    "quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+    "quote_amount": "3000",
+    "quote_currency": "usd",
+    "base_amount": "5",
+    "base_currency": "btc",
+    "expires_on": 1257894000000,
+    "fee": "75",
+    "fee_currency": "usd"
 }
 ```
 
@@ -485,7 +485,7 @@ quote_currency | the quote currency (in the case of `btcusd` this will be `usd`)
 quote_amount | the quote amount
 base_currency | the base currency (in the case of `btcusd` this will be `btc`)
 base_amount | the base amount
-expires_at | expiration time of the quote, expressed as the number of seconds elapsed since January 1, 1970 UTC
+expires_on | expiration time of the quote, expressed as the number of seconds elapsed since January 1, 1970 UTC
 fee | this is the fee charged, which has already been included in the quote_amount
 fee_currency | the currency of the fee charged
 quote_id | the unique id of this quote
@@ -517,15 +517,15 @@ then you will get a `404` back
 
 ```json
 {
-	"quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
+    "quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
     "action": "buy",
-	"quote_amount": "3000",
-	"quote_currency": "usd",
-	"base_amount": "5",
-	"base_currency": "btc",
-    "expires_at": 1257894000000,
-	"fee": "75",
-	"fee_currency": "usd"
+    "quote_amount": "3000",
+    "quote_currency": "usd",
+    "base_amount": "5",
+    "base_currency": "btc",
+    "expires_on": 1257894000000,
+    "fee": "75",
+    "fee_currency": "usd"
 }
 ```
 
@@ -623,8 +623,8 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id
 
 ```json
 {
-	"transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
-	"status": "completed"
+    "transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
+    "status": "completed"
 }
 ```
 
@@ -712,8 +712,8 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id
 
 ```json
 {
-	"transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
-	"status": "completed"
+    "transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
+    "status": "completed"
 }
 ```
 
