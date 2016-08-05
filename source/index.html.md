@@ -47,7 +47,10 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account" \
   -d '{
     "username":"user@domain.com",
     "email":"user@domain.com",
-    "password":"password123"
+    "password":"password123",
+    "phone_number": "+12345678901",
+    "email_proof": "",
+    "phone_proof": ""
   }'
 ```
 
@@ -85,9 +88,12 @@ used for further actions on the account.  The `account token` should be encrypte
 
 Parameter | Description
 --------- | -----------
-email | the email used by the customer
+email | the verified email used by the customer
 username | this must be the same as the user's email
 password | this is used to allow the user to recover account information
+phone_number | the user's verified phone number
+phone_proof | a [jwt](https://jwt.io/) signed by the partner's key attesting to having verified the user's phone number
+email_proof | a [jwt](https://jwt.io/) signed by the partner's key attesting to having verified the user's email address
 
 ### Account Fields
 
@@ -183,8 +189,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
     "number": "b1234567",
     "state": "CA",
     "country": "US"
-  },
-  "phone_number": "+12345678900"
+  }
 }'
 
 ```
@@ -439,7 +444,7 @@ curl "https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>"
     "action": "buy",
     "base_currency": "btc",
     "quote_currency": "usd",
-    "amount": "50",
+    "amount": "3000",
     "amount_currency": "usd"
   }'
 ```
@@ -664,7 +669,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
 
 ```json
 {
-  "transaction_id": "transaction123",
+  "transaction_id": "8bc2172a-5b5f-11e6-b9e0-14109fd9ceb9",
   "address": "3EyTupDgqm5ETjwTn29QPWCkmTCoEv1WbT",
   "status": "pending"
 }
@@ -729,6 +734,69 @@ transaction_id | the transaction which is being confirmed
 
 `PATCH https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
+# Transactions
+
+## Get Transactions
+
+```shell
+curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
+  -H "X-SFOX-PARTNER-ID: <partner id>" \
+  -H "Authorization: Bearer <account token>" \
+  -H "Content-type: application/json"
+```
+
+> The result will be
+
+```json
+[
+  {
+    "action": "buy",
+    "transaction_id": "579afee4-5b5f-11e6-8e25-14109fd9ceb9",
+    "amount": "100",
+    "amount_currency": "usd",
+    "status": "pending"
+  },
+  {
+    "action": "buy",
+    "transaction_id": "579afee4-5b5f-11e6-8e25-14109fd9ceb9",
+    "amount": "100",
+    "amount_currency": "usd",
+    "quote_id": "07c89dda-5b60-11e6-87d5-14109fd9ceb9",
+    "base_currency": "btc",
+    "quote_currency": "usd",
+    "base_amount": "0.16666667",
+    "quote_amount": "100",
+    "fee": "1",
+    "fee_currency": "usd",
+    "status": "completed"
+  },
+  {
+    "action": "sell",
+    "transaction_id": "b30ef9d2-5b60-11e6-8ac6-14109fd9ceb9",
+    "amount": "1",
+    "amount_currency": "btc",
+    "quote_id": "b8b9d168-5b60-11e6-8c1d-14109fd9ceb9",
+    "base_currency": "btc",
+    "quote_currency": "usd",
+    "base_amount": "1",
+    "quote_amount": "590",
+    "fee": "6",
+    "fee_currency": "usd",
+    "status": "completed"
+  }
+]
+```
+
+Use this api to get a list of all transaction.  
+
+### HTTP Request
+
+`GET https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
+
+### Response Fields
+
+This api will return an array of [transaction details](#transaction-fields) sorted from newest to oldest
+
 ## Get Transaction Details
 
 ```shell
@@ -755,12 +823,19 @@ Use this api to get the status of a previously initiated transaction.
 
 `GET https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
-### Response Fields
+### Transaction Fields
 
 Parameter | Description
 --------- | -----------
 transaction_id | same as the provided transaction_id
 amount | the amount of the transaction
 amount_currency | the currency of the amount specified
+quote_id | the quote_id used to complete this transaction (if any) 
+base_currency | the base currency of the quote
+base_amount | the base amount of the quote
+quote_currency | the quote currency of the quote used
+quote_amount | the quote amount
+fee | the fee charged for this transaction
+fee_currency | the currency of the fee charged
 status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
 
