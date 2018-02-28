@@ -5,7 +5,7 @@ language_tabs:
   - shell
 
 toc_footers:
-  - <a href=''>Sign Up for a Partner Account</a>
+  - <a href='mailto:support@sfox.com'>Sign Up for a Partner Account</a>
   - <a href='mailto:support@sfox.com'>Need help? Email us</a>
 
 includes:
@@ -21,8 +21,25 @@ Welcome to the SFOX API! The API allows you to offer buy/sell services to your c
 SFOX uses partner IDs for tracking purposes only.
 
 <aside class="notice">
-You must replace "partner id" with your partner id provided to you by SFOX.
+You must replace "partner id" with your partner id provided to you by SFOX.  "partner name" is used for analytics purposes, please use your company name in all requests
 </aside>
+
+# Sandbox
+
+A public sandbox is available for testing against our API. The sandbox provides all of the functionality of the production envirnoment while not executing real trades.
+
+API keys are separate from production.
+
+## Sandbox URLs
+
+When testing your API connectivity, make sure to use the following URLs.
+
+**Partner API**  
+**https://api.staging.sfox.com**
+
+**Quotes API**  
+**https://quotes.staging.sfox.com**
+
 
 # Creating a Customer Account
 
@@ -41,16 +58,13 @@ To create a customer account on SFOXs:
 
 ```shell
 # With shell, you can just pass the correct header with each request
-curl "https://api.sfox.com/v2/partner/<partner name>/account" \
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/account" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Content-type: application/json" \
   -d '{
     "username":"user@domain.com",
-    "email":"user@domain.com",
     "password":"password123",
-    "phone_number": "+12345678901",
-    "email_proof": "",
-    "phone_proof": ""
+    "user_data": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRldmVsb3BlcnNAc2ZveC5jb20iLCJwaG9uZV9udW1iZXIiOiIrMTMxMDU1NTExMTEifQ.SCeI3WAV2rLds5nV89EBtgxGjAV-iCdf-0dNdIEVNUo65hoQKJ6aCgNktzc7Ka57qcWgK6qWDMkAEy9ZM7XzZQ"
   }'
 ```
 
@@ -88,12 +102,9 @@ used for further actions on the account.  The `account token` should be encrypte
 
 Parameter | Description
 --------- | -----------
-email | the verified email used by the customer
 username | this must be the same as the user's email
 password | this is used to allow the user to recover account information
-phone_number | the user's verified phone number
-phone_proof | a [jwt](https://jwt.io/) signed by the partner's key attesting to having verified the user's phone number
-email_proof | a [jwt](https://jwt.io/) signed by the partner's key attesting to having verified the user's email address
+user_data | a [jwt](https://jwt.io/) object - signed by the partner's key - that containes the verified `phone_number` and `email` of the user
 
 ### Account Fields
 
@@ -108,11 +119,11 @@ limits | this describes both the user's total limits, and their available limits
 
 ## Get Account Info
 
-> To create an account:
+> To view an account:
 
 ```shell
 # With shell, you can just pass the correct header with each request
-curl "https://api.sfox.com/v2/partner/<partner name>/account" \
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/account" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json"
@@ -167,7 +178,7 @@ limits | this describes both the user's total limits, and their available limits
 ## Verify Account
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/account/verify" \
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/account/verify" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
@@ -257,11 +268,24 @@ ssn | Social Security Number
 
 Level | Description
 --------- | -----------
+unverified|the user has not attempted verification yet.  this is the default level for brand new accounts
 verified|the user has been verified and no further action is needed
 pending|the user needs further verification by SFOX, however no further action is needed by the user
 needs_documents|SFOX needs further documentation from the user which need to be [uploaded](#upload-required-verification-documents) using our api.  The list of documents required will be returned in the [required_docs](#required-docs) property. 
 
 If the api, however, returns a list of [required documents](#required-docs) then the user has to submit these documents for further consideration.
+
+### Testing
+
+In the sandbox envirnoment you can test each one of these levels on demand.  To do that simply override the `street2` field with one of the following values to get the desired result
+
+street2 | Result
+--------- | -----------
+testing-docs-id|the user will be required to upload proof of id
+testing-docs-address|the user will be required to upload proof of address
+testing-docs-all|the user will be required to upload both proof of id and proof of address
+testing-user-block|the user will be marked as blocked and will not be allowed to buy/sell
+
 
 ## Required Docs
 
@@ -275,7 +299,7 @@ passport|a scan of the pages that include the passport number, person's photo, f
 ## Upload Required Verification Documents
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/uploads/sign" \
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/uploads/sign" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
@@ -302,14 +326,14 @@ User documents are uploaded directly to S3 from the client browser.  The process
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v1/upload/sign`
+`POST https://api.staging.sfox.com/v1/upload/sign`
 
 # Payment Methods
 
 ## Add Payment Method
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods" \
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/payment-methods" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>:" \
   -H "Content-type: application/json" \
@@ -321,7 +345,8 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods" \
         "account_number": "0001112345667",
         "name1": "john doe",
         "name2": "jane doe",
-        "nickname": "checking 1"
+        "nickname": "checking 1",
+        "type": "checking"
     }
 }'
 ```
@@ -353,6 +378,7 @@ account_number | the customer's account number with the bank
 name1 | the full name on the account
 name2 | if this is a joint account, the secondary name on the account
 nickname | a name for the customer to identify this account on SFOX
+type | one of: `checking`, or `savings`
 
 ### Payment Status
 
@@ -364,12 +390,12 @@ inactive|payment method is not valid and cannot be used
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner name>/payment-methods`
+`POST https://api.staging.sfox.com/v2/partner/<partner name>/payment-methods`
 
 ## Verify Payment Method
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
@@ -391,6 +417,10 @@ curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify" \
 
 Use Verify Payment Method for payment methods that are in the "pending" state.  These payment methods, like ACH account, require the user to enter the 2 amounts that will be sent to their account.  When the amounts match, the payment method will be activated
 
+<aside class="notice">
+In our sandbox envirnoment the verification amounts will always be <b>0.01</b> and <b>0.02</b>
+</aside>
+
 ### Request Fields
 
 Field | Description
@@ -400,12 +430,12 @@ amount2 | the other deposit amount initiated by SFOX
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner name>/payment-methods/verify`
+`POST https://api.staging.sfox.com/v2/partner/<partner name>/payment-methods/verify`
 
 ## Get Payment Methods
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/payment-methods"
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/payment-methods"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json"
@@ -430,14 +460,14 @@ Returns a list of payment methods on the account
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v2/partner/<partner name>/account/payment-methods`
+`GET https://api.staging.sfox.com/v2/partner/<partner name>/account/payment-methods`
 
 # Trade
 
 ## Request a Quote
 
 ```shell
-curl "https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>"
+curl "https://quotes.staging.sfox.com/v1/partner/<partner name>/quote/<action>" \
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Content-type: application/json" \
   -d '{
@@ -459,7 +489,7 @@ curl "https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>"
     "base_amount": "5",
     "base_currency": "btc",
     "expires_on": 1257894000000,
-    "fee": "75",
+    "fee_amount": "75",
     "fee_currency": "usd"
 }
 ```
@@ -469,7 +499,7 @@ a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`POST https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>`
+`POST https://quotes.staging.sfox.com/v1/partner/<partner name>/quote/<action>`
 
 ### Request Parameters
 
@@ -491,7 +521,7 @@ quote_amount | the quote amount
 base_currency | the base currency (in the case of `btcusd` this will be `btc`)
 base_amount | the base amount
 expires_on | expiration time of the quote, expressed as the number of seconds elapsed since January 1, 1970 UTC
-fee | this is the fee charged, which has already been included in the quote_amount
+fee_amount | this is the fee charged, which has already been included in the quote_amount
 fee_currency | the currency of the fee charged
 quote_id | the unique id of this quote
 
@@ -499,20 +529,20 @@ quote_id | the unique id of this quote
 
 #### A quote to buy $20 worth of bitcoins
 
-`POST https://quotes.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
+`POST https://quotes.staging.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
 
 #### A quote to buy 2 bitcoins
 
-`POST https://quotes.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
+`POST https://quotes.staging.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
 
 #### A quote to sell 2.12345678 bitcoins
 
-`POST https://quotes.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
+`POST https://quotes.staging.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
 
 ## Get Quote Details
 
 ```shell
-curl "https://quotes.sfox.com/v1/quote/<quote id>"
+curl "https://quotes.staging.sfox.com/v1/quote/<quote id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Content-type: application/json"
 ```
@@ -529,7 +559,7 @@ then you will get a `404` back
     "base_amount": "5",
     "base_currency": "btc",
     "expires_on": 1257894000000,
-    "fee": "75",
+    "fee_amount": "75",
     "fee_currency": "usd"
 }
 ```
@@ -539,38 +569,36 @@ a quote in both the base and quote currencies.
 
 ### HTTP Request
 
-`POST https://quotes.sfox.com/v1/partner/<partner name>/quote/<action>`
+`POST https://quotes.staging.sfox.com/v1/partner/<partner name>/quote/<action>`
 
 
 ### Examples
 
 #### A quote to buy $20 worth of bitcoins
 
-`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
+`POST https://api.staging.sfox.com/v2/partner/sfox/quote/buy/btc/usd/20/usd`
 
 #### A quote to buy 2 bitcoins
 
-`POST https://api.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
+`POST https://api.staging.sfox.com/v2/partner/sfox/quote/buy/btc/usd/2/btc`
 
 #### A quote to sell 2.12345678 bitcoins
 
-`POST https://api.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
+`POST https://api.staging.sfox.com/v2/partner/sfox/quote/sell/btc/usd/2.12345678/btc`
 
-## Initiate Buy
+## Buy
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -d '{
-    "action": "buy",
+    "quote_id": "a5098dd0-4cb2-4256-9cb5e871fbe672d1",
     "destination": {
       "type": "address",
       "address": "1EyTupDgqm5ETjwTn29QPWCkmTCoEv1WbT"
     },
-    "amount": "100",
-    "amount_currency": "usd",
     "payment_method_id": "payment123"
   }'
 ```
@@ -579,89 +607,46 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
 
 ```json
 {
-  "transaction_id": "transaction123",
+  "transaction_id": "e8ae8ed9-e7f4-43b3-8d87-417c1f19b0f9",
   "status": "pending"
 }
 ```
 
-This api call will initiate the buy transaction by withdrawing `amount` from the payment source specified.  Once the funds are available, the transaction's status will change to ready.  The partner needs to call the [confirm buy](#confirm-buy) api to complete the purchase.  
+This api call will initiate the buy transaction by withdrawing `amount` from the quote specified.  Once the funds are available, the transaction's status will change to completed, and the bitcoin will be delivered once available.
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner name>/transaction`
+`POST https://api.staging.sfox.com/v2/partner/<partner name>/transaction`
 
 ### Request Parameters
 
 Parameter | Description
 --------- | -----------
-destination.type | the type of destination to receive the funds. For a buy order this is always `payment_method`
+destination.type | the type of destination to receive the funds. For a buy transaction this is always `address`
 destination.address | the bitcoin address to send the purchased bitcoins to
-payment_method_id | the funding source for the transaction (if this is a buy transaction)
-amount_currency | the name of the fiat currency the user wishes to use
-amount | the amount that'll be used for the purchase transaction 
+payment_method_id | the funding source for the transaction (if this is a buy transaction). default: the primary funding source on the account
+quote_id | the quote_id which is the basis of this transaction
 
 ### Response Fields
 
 Parameter | Description
 --------- | -----------
 transaction_id | the id for this transaction
-status | 
-payment_method_id | the funding source for the transaction (if this is a buy transaction)
-amount_currency | the name of the fiat currency the user wishes to use
-amount | the amount that'll be used for the purchase transaction 
+status | possible values: `pending`, `completed`, `failed`, `rejected`
 
-## Confirm Buy
+## Sell
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
-  -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <account token>" \
-  -H "Content-type: application/json" \
-  -X PATCH \
-  -d '{
-    "quote_id": "b3d7ce70-4d91-11e6-bfc6-14109fd9ceb9",
-    "transaction_id": "transaction123"
-  }'
-```
-
-> The quote returned will have the following format
-
-```json
-{
-    "transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
-    "status": "completed"
-}
-```
-
-Once the transaction is ready, the user must accept a quote and confirm the transaction with the provided `quote_id`.  The amount
-specified in the Buy transaction must match the quote amount, otherwise the transaction will not confirm.
-
-### Request Parameters
-
-Parameter | Description
---------- | -----------
-action | this is `buy`
-quote_id | the id of the quote to be used to complete the sell transaction.  The base amount of the quote must match that of the transaction otherwise this will fail
-transaction_id | the transaction which is being confirmed
-
-### HTTP Request
-
-`PATCH https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
-
-## Initiate Sell
-
-```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json" \
   -d '{
-    "action": "sell",
+    "quote_id": "5e15e347-b7d2-4b4f-8721-854fa9bb4a99",
     "destination": {
       "type": "payment_method",
       "payment_method_id": "payment123"
-    },
-    "currency": "btc"
+    }
   }'
 ```
 
@@ -675,21 +660,20 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
 }
 ```
 
-This api call will initiate the sell transaction by providing a deposit address for the user to transfer bitcoins to.  Once the funds are available,
-and confirmed, the partner needs to call the [confirm sell](#confirm-sell) api to complete the sell transaction.  
+This api call will initiate the sell transaction by providing a deposit address for the user to transfer bitcoins to.  Once the bitcoin is transfered and confirmed,
+the funds will be delivered to the `payment_method_id` specified.  
 
 ### HTTP Request
 
-`POST https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
+`POST https://api.staging.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ### Request Parameters
 
 Parameter | Description
 --------- | -----------
-action | this is always `sell`
-destination.type | the type of destination to receive the funds. One of: payment_method, or address
+destination.type | the type of destination to receive the funds. For a sell transaction this has to be `payment_method`
 destination.payment_method_id | the payment method id to receive the funds from a bitcoin sale
-currency | the crypto-currency the user is selling
+quote_id | the quote_id which is the basis of this transaction
 
 ### Response Fields
 
@@ -699,47 +683,12 @@ transaction_id | the same transaction_id used in the request
 address | the address the user needs to send the bitcoins to complete this transaction
 status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
 
-## Confirm Sell
-
-```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
-  -H "X-SFOX-PARTNER-ID: <partner id>" \
-  -H "Authorization: Bearer <account token>" \
-  -H "Content-type: application/json" \
-  -X PATCH \
-  -d '{
-    "quote_id": "b3d7ce70-4d91-11e6-bfc6-14109fd9ceb9",
-    "transaction_id": "transaction123"
-  }'
-```
-
-> The quote returned will have the following format
-
-```json
-{
-    "transaction_id": "d0acf552-4d91-11e6-82df-14109fd9ceb9",
-    "status": "completed"
-}
-```
-
-### Request Parameters
-
-Parameter | Description
---------- | -----------
-action | this is `sell`
-quote_id | the id of the quote to be used to complete the sell transaction.  The base amount of the quote must match that of the transaction otherwise this will fail
-transaction_id | the transaction which is being confirmed
-
-### HTTP Request
-
-`PATCH https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
-
 # Transactions
 
 ## Get Transactions
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/transaction"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json"
@@ -766,7 +715,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
     "quote_currency": "usd",
     "base_amount": "0.16666667",
     "quote_amount": "100",
-    "fee": "1",
+    "fee_amount": "1",
     "fee_currency": "usd",
     "status": "completed"
   },
@@ -780,7 +729,7 @@ curl "https://api.sfox.com/v2/partner/<partner name>/transaction"
     "quote_currency": "usd",
     "base_amount": "1",
     "quote_amount": "590",
-    "fee": "6",
+    "fee_amount": "6",
     "fee_currency": "usd",
     "status": "completed"
   }
@@ -791,7 +740,7 @@ Use this api to get a list of all transaction.
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
+`GET https://api.staging.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ### Response Fields
 
@@ -800,7 +749,7 @@ This api will return an array of [transaction details](#transaction-fields) sort
 ## Get Transaction Details
 
 ```shell
-curl "https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
+curl "https://api.staging.sfox.com/v2/partner/<partner name>/transaction/<transaction id>"
   -H "X-SFOX-PARTNER-ID: <partner id>" \
   -H "Authorization: Bearer <account token>" \
   -H "Content-type: application/json"
@@ -821,7 +770,7 @@ Use this api to get the status of a previously initiated transaction.
 
 ### HTTP Request
 
-`GET https://api.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
+`GET https://api.staging.sfox.com/v2/partner/<partner name>/transaction/<transaction id>`
 
 ### Transaction Fields
 
@@ -835,7 +784,7 @@ base_currency | the base currency of the quote
 base_amount | the base amount of the quote
 quote_currency | the quote currency of the quote used
 quote_amount | the quote amount
-fee | the fee charged for this transaction
+fee_amount | the fee charged for this transaction
 fee_currency | the currency of the fee charged
 status | one of: `pending`, `failed`, `rejected`, `ready`, `completed` 
 
